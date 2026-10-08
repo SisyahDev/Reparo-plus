@@ -1476,39 +1476,42 @@
         const row = document.createElement('div');
         row.className = isMine ? 'flex justify-end' : 'flex justify-start';
         const bubble = document.createElement('div');
-        bubble.className = `max-w-[80%] p-3 rounded-2xl text-xs space-y-1 shadow-sm ${isMine ? 'bg-brand-main text-white rounded-tr-none' : 'bg-white border border-brand-border text-brand-text rounded-tl-none'}`;
+        bubble.className = `max-w-[85%] p-3 rounded-2xl text-xs space-y-2 shadow-sm ${isMine ? 'bg-brand-main text-white rounded-tr-none' : 'bg-white border border-brand-border text-brand-text rounded-tl-none'}`;
+
         const author = document.createElement('div');
         author.className = `text-[10px] font-bold ${isMine ? 'text-white/80' : 'text-brand-chat'}`;
-        author.textContent = msg.author || (msg.role === 'professional' ? 'Carlos Silva (Técnico)' : getResidentName());
+        author.textContent = msg.author || (msg.role === 'professional' ? 'Carlos Silva (Técnico)' : 'Ana Oliveira');
+        bubble.appendChild(author);
+
         if (msg.type === 'quote') {
           bubble.className = `max-w-[90%] p-3 rounded-2xl text-xs space-y-2 shadow-sm border ${isMine ? 'bg-orange-50 border-orange-300 text-brand-text' : 'bg-white border-orange-300 text-brand-text'}`;
           const title = document.createElement('div');
           title.className = 'font-extrabold text-sm text-brand-main';
           title.textContent = 'Orçamento de serviço';
-          const service = document.createElement('p'); service.className = 'font-bold'; service.textContent = msg.service;
+          const service = document.createElement('p'); service.className = 'font-bold'; service.textContent = msg.service || 'Serviço solicitado';
           const price = document.createElement('p'); price.className = 'text-lg font-extrabold text-brand-secondary';
-          price.textContent = Number(msg.price).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+          price.textContent = Number(msg.price || 0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
           bubble.append(title, service, price);
-          if (msg.details) { const details=document.createElement('p'); details.style.whiteSpace='pre-wrap'; details.textContent=msg.details; bubble.append(details); }
-          const state=document.createElement('p'); state.className='text-[10px] font-bold';
-          state.textContent = msg.quoteStatus === 'accepted' ? '✓ Orçamento aceito pelo morador' : msg.quoteStatus === 'declined' ? 'Orçamento recusado' : 'Aguardando resposta do morador';
-          bubble.append(state);
+          if (msg.details) { const details = document.createElement('p'); details.style.whiteSpace = 'pre-wrap'; details.textContent = msg.details; bubble.appendChild(details); }
+          const state = document.createElement('p'); state.className = 'text-[10px] font-bold';
+          state.textContent = msg.quoteStatus === 'accepted' ? '✓ Orçamento aceito pelo morador' : msg.quoteStatus === 'declined' ? 'Orçamento recusado pelo morador' : 'Aguardando resposta do morador';
+          bubble.appendChild(state);
           if (currentUserRole === 'customer' && !msg.quoteStatus) {
-            const actions=document.createElement('div'); actions.className='flex gap-2 pt-1';
-            const accept=document.createElement('button'); accept.type='button'; accept.className='px-3 py-2 rounded-lg bg-brand-secondary text-white font-bold'; accept.textContent='Contratar'; accept.onclick=()=>acceptQuote(msg.id);
-            const decline=document.createElement('button'); decline.type='button'; decline.className='px-3 py-2 rounded-lg border border-brand-border'; decline.textContent='Recusar'; decline.onclick=()=>declineQuote(msg.id);
-            actions.append(accept,decline); bubble.append(actions);
+            const actions = document.createElement('div'); actions.className = 'flex flex-wrap gap-2 pt-1';
+            const accept = document.createElement('button'); accept.type = 'button'; accept.className = 'px-3 py-2 rounded-lg bg-brand-secondary text-white font-bold'; accept.textContent = 'Contratar'; accept.onclick = () => acceptQuote(msg.id);
+            const decline = document.createElement('button'); decline.type = 'button'; decline.className = 'px-3 py-2 rounded-lg border border-brand-border'; decline.textContent = 'Recusar'; decline.onclick = () => declineQuote(msg.id);
+            actions.append(accept, decline); bubble.appendChild(actions);
           }
         } else {
           const body = document.createElement('p');
           body.style.whiteSpace = 'pre-wrap';
-          body.textContent = msg.text;
-          bubble.append(body);
+          body.textContent = msg.text || '';
+          bubble.appendChild(body);
         }
         const time = document.createElement('span');
-        time.className = `text-[9px] block text-right ${isMine ? 'text-white/70' : 'text-brand-muted'}`;
+        time.className = `text-[9px] block text-right ${isMine && msg.type !== 'quote' ? 'text-white/70' : 'text-brand-muted'}`;
         time.textContent = msg.time || '';
-        bubble.append(author, body, time);
+        bubble.appendChild(time);
         row.appendChild(bubble);
         container.appendChild(row);
       });
