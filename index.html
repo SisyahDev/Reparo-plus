@@ -620,12 +620,32 @@
 
           <label class="p-3.5 rounded-2xl border border-brand-border bg-white hover:border-brand-main cursor-pointer flex flex-col justify-between transition">
             <div class="flex items-center justify-between mb-2">
-              <span class="font-extrabold text-xs text-brand-text">Carteira Digital</span>
-              <input type="radio" name="paymentMethod" value="wallet" class="text-brand-main">
+              <span class="font-extrabold text-xs text-brand-text">Cartão de Débito</span>
+              <input type="radio" name="paymentMethod" value="debit" class="text-brand-main">
             </div>
             <p class="text-[10px] text-brand-muted leading-tight">Saldo pré-recarregado para contratações recorrentes.</p>
           </label>
 
+        </div>
+
+        <div id="pixPaymentPanel" class="hidden rounded-2xl border border-brand-border bg-brand-light/40 p-4 text-center space-y-2">
+          <h4 class="font-extrabold text-sm text-brand-main">Pague com Pix</h4>
+          <p class="text-xs text-brand-muted">QR Code demonstrativo para a apresentação do protótipo.</p>
+          <div class="mx-auto bg-white p-2 rounded-lg border border-brand-border w-44 h-44 flex items-center justify-center">
+            <svg id="pixDemoQr" viewBox="0 0 21 21" class="w-full h-full" role="img" aria-label="QR Code demonstrativo do Pix" shape-rendering="crispEdges"></svg>
+          </div>
+          <p class="text-[10px] text-brand-muted">Este QR Code é ilustrativo e não movimenta dinheiro real.</p>
+          <div class="flex gap-2 text-left">
+            <input id="pixCopyCode" readonly value="REPAROS+ DEMO PIX — PAGAMENTO SIMULADO" class="min-w-0 flex-1 text-[10px] px-2 py-2 rounded-lg border border-brand-border bg-white">
+            <button type="button" onclick="copyPixDemoCode()" class="px-3 rounded-lg bg-brand-main text-white text-xs font-bold">Copiar código</button>
+          </div>
+        </div>
+
+        <div id="cardPaymentPanel" class="hidden rounded-2xl border border-brand-border bg-white p-4 space-y-3">
+          <h4 id="cardPaymentTitle" class="font-extrabold text-sm text-brand-main">Dados do cartão</h4>
+          <p class="text-xs text-brand-muted">Campos ilustrativos para demonstração. Não informe dados reais.</p>
+          <input placeholder="Número do cartão (simulação)" class="w-full text-xs px-3 py-2 rounded-lg border border-brand-border" maxlength="19" autocomplete="off">
+          <div class="grid grid-cols-2 gap-2"><input placeholder="Validade MM/AA" class="text-xs px-3 py-2 rounded-lg border border-brand-border" maxlength="5" autocomplete="off"><input placeholder="CVV" class="text-xs px-3 py-2 rounded-lg border border-brand-border" maxlength="4" autocomplete="off"></div>
         </div>
 
         <button onclick="confirmOrderPayment()" class="w-full py-3.5 rounded-2xl bg-brand-secondary hover:bg-brand-actionDark text-white font-extrabold text-xs shadow-md shadow-brand-secondary/20 flex items-center justify-center gap-2 transition active:scale-[0.99]">
@@ -656,7 +676,7 @@
               <span>1. Qualidade Técnica</span>
               <span class="text-brand-gold font-extrabold" id="scoreValQualidade">5.0 ★</span>
             </div>
-            <input type="range" min="1" max="5" step="0.1" value="5.0" oninput="updateRangeDisplay('Qualidade', this.value)" class="w-full accent-brand-gold">
+            <input type="range" min="1" max="5" step="0.1" value="5.0" id="reviewQualidade" oninput="updateRangeDisplay('Qualidade', this.value)" class="w-full accent-brand-gold">
             <p class="text-[10px] text-brand-muted">Acabamento, funcionamento sem falhas e testes de isolamento.</p>
           </div>
 
@@ -665,7 +685,7 @@
               <span>2. Pontualidade</span>
               <span class="text-brand-gold font-extrabold" id="scoreValPontualidade">5.0 ★</span>
             </div>
-            <input type="range" min="1" max="5" step="0.1" value="5.0" oninput="updateRangeDisplay('Pontualidade', this.value)" class="w-full accent-brand-gold">
+            <input type="range" min="1" max="5" step="0.1" value="5.0" id="reviewPontualidade" oninput="updateRangeDisplay('Pontualidade', this.value)" class="w-full accent-brand-gold">
             <p class="text-[10px] text-brand-muted">Chegada no horário marcado e cumprimento do tempo acordado.</p>
           </div>
 
@@ -674,7 +694,7 @@
               <span>3. Atendimento e Limpeza</span>
               <span class="text-brand-gold font-extrabold" id="scoreValAtendimento">4.8 ★</span>
             </div>
-            <input type="range" min="1" max="5" step="0.1" value="4.8" oninput="updateRangeDisplay('Atendimento', this.value)" class="w-full accent-brand-gold">
+            <input type="range" min="1" max="5" step="0.1" value="4.8" id="reviewAtendimento" oninput="updateRangeDisplay('Atendimento', this.value)" class="w-full accent-brand-gold">
             <p class="text-[10px] text-brand-muted">Postura, clareza nas explicações e recolhimento de resíduos.</p>
           </div>
 
@@ -683,13 +703,13 @@
               <span>4. Cumprimento do Orçamento</span>
               <span class="text-brand-gold font-extrabold" id="scoreValOrcamento">5.0 ★</span>
             </div>
-            <input type="range" min="1" max="5" step="0.1" value="5.0" oninput="updateRangeDisplay('Orcamento', this.value)" class="w-full accent-brand-gold">
+            <input type="range" min="1" max="5" step="0.1" value="5.0" id="reviewOrcamento" oninput="updateRangeDisplay('Orcamento', this.value)" class="w-full accent-brand-gold">
             <p class="text-[10px] text-brand-muted">Sem cobranças surpresas fora do valor fechado no app.</p>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-brand-text mb-1">Comentário Público com Evidência</label>
-            <textarea placeholder="Descreva brevemente como foi o serviço..." rows="3" class="w-full p-3 bg-brand-bg border border-brand-border rounded-xl text-xs text-brand-text focus:outline-none focus:border-brand-main"></textarea>
+            <textarea id="reviewComment" placeholder="Descreva brevemente como foi o serviço..." rows="3" class="w-full p-3 bg-brand-bg border border-brand-border rounded-xl text-xs text-brand-text focus:outline-none focus:border-brand-main"></textarea>
           </div>
 
           <button onclick="submitReviewAction()" class="w-full py-3 rounded-xl bg-brand-secondary hover:bg-brand-actionDark text-white font-bold text-xs shadow-md shadow-brand-secondary/20 transition active:scale-95">
@@ -1420,6 +1440,7 @@
     }
 
     const CHAT_STORAGE_KEY = 'reparosPlusDemoConversationV1';
+    let acceptedQuoteForPayment = null;
 
     function getChatMessages() {
       try { return JSON.parse(localStorage.getItem(CHAT_STORAGE_KEY) || '[]'); }
@@ -1546,8 +1567,13 @@
     }
     function acceptQuote(id) {
       if (currentUserRole !== 'customer' || !currentUserLoggedIn) return;
+      const quote = getChatMessages().find(m => m.id === id && m.type === 'quote');
+      if (!quote) { showToast('Não foi possível localizar esse orçamento.'); return; }
       updateQuoteStatus(id,'accepted');
-      showToast('Orçamento aceito! Contratação registrada na demonstração.');
+      acceptedQuoteForPayment = { id: quote.id, service: quote.service, price: Number(quote.price), professional: quote.author || currentSelectedPro.name };
+      updatePaymentView();
+      navigateTo('view-payment');
+      showToast('Orçamento aceito! Escolha a forma de pagamento.');
     }
     function declineQuote(id) {
       if (currentUserRole !== 'customer' || !currentUserLoggedIn) return;
@@ -1607,30 +1633,57 @@
     }
 
     function updatePaymentView() {
-      const gross = 100;
+      const gross = acceptedQuoteForPayment && Number.isFinite(acceptedQuoteForPayment.price) ? acceptedQuoteForPayment.price : 100;
       const fee = gross * 0.12;
       const net = gross - fee;
-
       const professionalLabel = document.getElementById('paymentProfessionalLabel');
       const grossEl = document.getElementById('paymentGrossValue');
       const feeEl = document.getElementById('paymentFeeValue');
       const netEl = document.getElementById('paymentNetValue');
       const confirmEl = document.getElementById('confirmPaymentText');
+      const money = value => value.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+      if (professionalLabel) professionalLabel.textContent = `Repasse líquido ao profissional (${acceptedQuoteForPayment?.professional || currentSelectedPro.name})`;
+      if (grossEl) grossEl.textContent = money(gross);
+      if (feeEl) feeEl.textContent = `- ${money(fee)}`;
+      if (netEl) netEl.textContent = money(net);
+      if (confirmEl) confirmEl.textContent = `Confirmar pagamento de ${money(gross)} em custódia`;
+      const radios = [...document.querySelectorAll('input[name="paymentMethod"]')];
+      radios.forEach(radio => radio.onchange = updatePaymentMethodPanels);
+      updatePaymentMethodPanels();
+      renderDemoQr();
+    }
 
-      if (professionalLabel) professionalLabel.textContent = `Repasse líquido ao profissional (${currentSelectedPro.name})`;
-      if (grossEl) grossEl.textContent = `R$ ${gross.toFixed(2).replace('.', ',')}`;
-      if (feeEl) feeEl.textContent = `- R$ ${fee.toFixed(2).replace('.', ',')}`;
-      if (netEl) netEl.textContent = `R$ ${net.toFixed(2).replace('.', ',')}`;
-      if (confirmEl) confirmEl.textContent = `Confirmar Pagamento de R$ ${gross.toFixed(2).replace('.', ',')} em Custódia`;
+    function updatePaymentMethodPanels() {
+      const method = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'pix';
+      document.getElementById('pixPaymentPanel')?.classList.toggle('hidden', method !== 'pix');
+      document.getElementById('cardPaymentPanel')?.classList.toggle('hidden', !['card','debit'].includes(method));
+      const title = document.getElementById('cardPaymentTitle');
+      if (title) title.textContent = method === 'debit' ? 'Cartão de débito' : 'Cartão de crédito';
+    }
+
+    function renderDemoQr() {
+      const svg = document.getElementById('pixDemoQr');
+      if (!svg || svg.childElementCount) return;
+      // Matriz visual ilustrativa; não representa um QR Pix bancário válido.
+      const matrix = Array.from({length:21}, (_,y) => Array.from({length:21}, (_,x) => ((x*7 + y*11 + x*y*3 + (x%4)*5) % 9) < 4));
+      const finder = (ox,oy) => { for(let y=0;y<7;y++) for(let x=0;x<7;x++) matrix[oy+y][ox+x] = x===0||x===6||y===0||y===6||(x>=2&&x<=4&&y>=2&&y<=4); };
+      finder(0,0); finder(14,0); finder(0,14);
+      matrix.forEach((row,y)=>row.forEach((on,x)=>{if(on){const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');rect.setAttribute('x',x);rect.setAttribute('y',y);rect.setAttribute('width','1');rect.setAttribute('height','1');rect.setAttribute('fill','#12355B');svg.appendChild(rect);}}));
+    }
+
+    function copyPixDemoCode() {
+      const input = document.getElementById('pixCopyCode');
+      input?.select();
+      try { document.execCommand('copy'); showToast('Código demonstrativo copiado.'); }
+      catch (_) { showToast('Este é um código ilustrativo, não um Pix válido.'); }
     }
 
     function confirmOrderPayment() {
-      const gross = 100;
-      showToast(`Pagamento de R$ ${gross.toFixed(2).replace('.', ',')} retido em custódia com sucesso!`);
-      setTimeout(() => {
-        updateReviewView();
-        navigateTo('view-review');
-      }, 800);
+      const gross = acceptedQuoteForPayment?.price ?? 100;
+      const method = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'pix';
+      const methodName = method === 'pix' ? 'Pix (simulação)' : method === 'card' ? 'cartão de crédito (simulação)' : 'cartão de débito (simulação)';
+      showToast(`Pagamento de ${gross.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})} por ${methodName} registrado na demonstração. Nenhuma cobrança real foi feita.`);
+      setTimeout(() => { updateReviewView(); navigateTo('view-review'); }, 800);
     }
 
     function updateReviewView() {
@@ -1646,8 +1699,36 @@
     }
 
     function submitReviewAction() {
-      showToast('Avaliação publicada e integrada ao perfil do técnico!');
+      const pro = currentSelectedPro || professionalsData[0];
+      const scores = {
+        qualidade: Number(document.getElementById('reviewQualidade')?.value || 5),
+        pontualidade: Number(document.getElementById('reviewPontualidade')?.value || 5),
+        atendimento: Number(document.getElementById('reviewAtendimento')?.value || 5),
+        orcamento: Number(document.getElementById('reviewOrcamento')?.value || 5)
+      };
+      const comment = (document.getElementById('reviewComment')?.value || '').trim();
+      const average = (scores.qualidade + scores.pontualidade + scores.atendimento + scores.orcamento) / 4;
+      const review = { professionalId: pro.id, professionalName: pro.name, scores, average: Number(average.toFixed(1)), comment, createdAt: new Date().toISOString() };
+      try {
+        const allReviews = JSON.parse(localStorage.getItem('reparosPlusReviews') || '[]');
+        allReviews.push(review);
+        localStorage.setItem('reparosPlusReviews', JSON.stringify(allReviews));
+      } catch (e) { /* a avaliação ainda pode ser confirmada nesta sessão */ }
+      const oldCount = pro.reviewsCount;
+      pro.overallScore = Number((((pro.overallScore * oldCount) + average) / (oldCount + 1)).toFixed(1));
+      pro.reviewsCount = oldCount + 1;
+      pro.criteria = {
+        qualidade: Number((((pro.criteria.qualidade * oldCount) + scores.qualidade) / (oldCount + 1)).toFixed(1)),
+        pontualidade: Number((((pro.criteria.pontualidade * oldCount) + scores.pontualidade) / (oldCount + 1)).toFixed(1)),
+        atendimento: Number((((pro.criteria.atendimento * oldCount) + scores.atendimento) / (oldCount + 1)).toFixed(1)),
+        orcamento: Number((((pro.criteria.orcamento * oldCount) + scores.orcamento) / (oldCount + 1)).toFixed(1))
+      };
+      const commentBox = document.getElementById('reviewComment');
+      if (commentBox) commentBox.value = '';
+      showToast(`Avaliação publicada! Nota média: ${average.toFixed(1)} ★. Obrigado por avaliar ${pro.name}.`);
       setTimeout(() => {
+        executeSearch();
+        if (currentSelectedPro?.id === pro.id) openProfessionalProfile(pro.id);
         navigateTo('view-search');
       }, 900);
     }
