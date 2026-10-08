@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reparos+ | Encontre profissionais com segurança</title>
+  
+  <!-- Fontes Google e Ícones FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Configuração das cores do projeto -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              main: '#12355B',
+              secondary: '#F28C28',
+              light: '#FFF3E6',
+              bg: '#F7F9FC',
+              text: '#1F2933',
+              muted: '#667085',
+              border: '#D9E2EC',
+              chat: '#256D85',
+              alert: '#D64545',
+              mainDark: '#0D2945',
+              chatDark: '#1E566A',
+              chatLight: '#E7F1F4',
+              gold: '#FFC857'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+            body: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Transições suaves e scrollbar limpa */
+    * { -webkit-tap-highlight-color: transparent; }
+    body {
+      background-color: #F7F9FC;
+      color: #1F2933;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #D9E2EC;
+      border-radius: 9999px;
+    }
+    
+    /* Animação suave para troca de telas */
+    .view-screen {
+      display: none;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .view-screen.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Pulso discreto para verificado */
+    @keyframes subtle-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.85; }
+    }
+    .verified-badge {
+      animation: subtle-pulse 3s infinite;
+    }
+  
+
+    .bg-brand-mainDark { background-color: #0D2945 !important; }
+    .bg-brand-chatDark { background-color: #1E566A !important; }
+    .bg-brand-chatLight { background-color: #E7F1F4 !important; }
+    .border-brand-chatLight { border-color: #E7F1F4 !important; }
+    .text-brand-chat { color: #256D85 !important; }
+    .bg-brand-chat { background-color: #256D85 !important; }
+    .bg-brand-actionDark { background-color: #D97616 !important; }
+    .bg-brand-chat\/20 { background-color: rgba(37,109,133,.20) !important; }
+    .bg-brand-light { background-color: #FFF3E6 !important; }
+    .text-brand-secondary { color: #F28C28 !important; }
+    .bg-brand-secondary { background-color: #F28C28 !important; }
+    .text-brand-gold { color: #FFC857 !important; }
+    .bg-brand-gold { background-color: #FFC857 !important; }
+
+  /* Reparos+ — hierarquia visual: azul para identidade, laranja para ações */
+  .brand-action {
+    background-color: #F28C28;
+    color: #FFFFFF;
+  }
+  .brand-action:hover {
+    background-color: #D97616;
+  }
+</style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-brand-light selection:text-brand-main">
+
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-brand-border px-4 py-3 sm:px-6">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      
+      <!-- Logotipo e Slogan -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('view-search')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-main to-brand-secondary flex items-center justify-center text-white shadow-sm font-extrabold text-xl tracking-tight">
+          R+
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-xl font-extrabold text-brand-main tracking-tight">Reparos<span class="text-brand-secondary">+</span></span>
+          </div>
+          <p class="text-[11px] text-brand-muted font-medium hidden sm:block">Encontre profissionais com segurança</p>
+        </div>
+      </div>
+
+      <!-- Navegação Desktop -->
+      <nav class="hidden md:flex items-center gap-1 font-medium text-sm text-brand-muted" id="desktopNav">
+        <button onclick="navigateTo('view-flow')" class="px-3 py-2 rounded-lg hover:text-brand-main hover:bg-brand-light/50 transition">
+          <i class="fa-solid fa-route mr-1.5 text-xs"></i>Fluxo
+        </button>
+        <button onclick="navigateTo('view-search')" class="px-3 py-2 rounded-lg hover:text-brand-main hover:bg-brand-light/50 transition">
+          <i class="fa-solid fa-magnifying-glass mr-1.5 text-xs"></i>Buscar
+        </button>
+        <button onclick="openProfessionalProfile('carlos')" class="px-3 py-2 rounded-lg hover:text-brand-main hover:bg-brand-light/50 transition">
+          <i class="fa-solid fa-id-card mr-1.5 text-xs"></i>Perfil
+        </button>
+        <button onclick="navigateTo('view-chat')" class="px-3 py-2 rounded-lg hover:text-brand-chat hover:bg-brand-chatLight transition relative">
+          <i class="fa-solid fa-comment-dots mr-1.5 text-xs text-brand-chat"></i>Chat
+          <span class="inline-block w-2 h-2 rounded-full bg-brand-chat ml-1"></span>
+        </button>
+        <button onclick="navigateTo('view-pro-dashboard')" class="px-3 py-2 rounded-lg hover:text-brand-main hover:bg-brand-light/50 transition">
+          <i class="fa-solid fa-briefcase mr-1.5 text-xs"></i>Área do Técnico
+        </button>
+        <button onclick="navigateTo('view-moderation')" class="px-3 py-2 rounded-lg hover:text-brand-alert hover:bg-red-50 transition text-brand-muted">
+          <i class="fa-solid fa-shield-halved mr-1.5 text-xs text-brand-alert"></i>Moderação
+        </button>
+      </nav>
+
+      <!-- Status do Usuário / Botão de Acesso -->
+      <div class="flex items-center gap-2.5">
+        <div id="userBadge" class="hidden items-center gap-2 bg-brand-light px-2.5 py-1.5 rounded-xl text-xs font-semibold text-brand-main">
+          <i class="fa-solid fa-user-check"></i>
+          <span id="userNameDisplay">Visitante</span>
+        </div>
+        <button id="authBtn" onclick="navigateTo('view-auth')" class="text-xs font-bold px-3.5 py-2 rounded-xl bg-brand-main text-white hover:bg-opacity-95 shadow-sm transition">
+          <i class="fa-solid fa-right-to-bracket mr-1.5"></i>Entrar
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+
+
+  <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 pb-24 md:pb-12">
+
+    <!-- ================================================================= -->
+    <!-- TELA 1: AUTENTICAÇÃO / LOGIN & CADASTRO (IDENTIFICAÇÃO POSITIVA) -->
+    <!-- ================================================================= -->
+    <div id="view-auth" class="view-screen max-w-md mx-auto">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-brand-border shadow-sm">
+        
+        <div class="text-center mb-6">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-main to-brand-secondary flex items-center justify-center text-white font-extrabold text-2xl mx-auto mb-3 shadow-md">
+            R+
+          </div>
+          <h2 class="text-2xl font-extrabold text-brand-main">Reparos+</h2>
+          <p class="text-xs text-brand-muted font-medium mt-1">Encontre profissionais com segurança e transparência</p>
+        </div>
+
+        <!-- Seletor de Perfil -->
+        <div class="flex p-1 bg-brand-bg rounded-xl border border-brand-border mb-5">
+          <button id="roleCustomerBtn" onclick="switchAuthRole('customer')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-brand-main text-white transition shadow-sm">
+            <i class="fa-solid fa-house-user mr-1.5"></i>Morador
+          </button>
+          <button id="roleProBtn" onclick="switchAuthRole('professional')" class="flex-1 py-2 text-xs font-semibold text-brand-muted hover:text-brand-main rounded-lg transition">
+            <i class="fa-solid fa-screwdriver-wrench mr-1.5"></i>Técnico / Profissional
+          </button>
+        </div>
+
+        <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
+          <div id="residentNameField">
+            <label class="block text-xs font-bold text-brand-text mb-1.5">Nome do morador</label>
+            <input type="text" id="authResidentName" value="" placeholder="Digite seu nome" class="w-full px-3 py-2.5 bg-brand-bg border border-brand-border rounded-xl text-xs text-brand-text placeholder-slate-400 focus:outline-none focus:border-brand-main focus:bg-white transition">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-brand-text mb-1.5">E-mail ou CPF</label>
+            <div class="relative">
+              <input type="text" id="authLoginInput" placeholder="seuemail@exemplo.com ou CPF" required class="w-full pl-10 pr-3 py-2.5 bg-brand-bg border border-brand-border rounded-xl text-xs text-brand-text placeholder-slate-400 focus:outline-none focus:border-brand-main focus:bg-white transition">
+              <i class="fa-solid fa-user text-brand-muted/70 absolute left-3.5 top-3 text-xs"></i>
+            </div>
+            <p class="text-[10px] text-brand-muted mt-1">Identificação positiva via CPF para segurança e rastreabilidade.</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-brand-text mb-1.5">Senha de Acesso</label>
+            <div class="relative">
+              <input type="password" id="authPasswordInput" placeholder="••••••••" required class="w-full pl-10 pr-3 py-2.5 bg-brand-bg border border-brand-border rounded-xl text-xs text-brand-text placeholder-slate-400 focus:outline-none focus:border-brand-main focus:bg-white transition">
+              <i class="fa-solid fa-lock text-brand-muted/70 absolute left-3.5 top-3 text-xs"></i>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] text-brand-muted">
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" checked class="rounded text-brand-main focus:ring-brand-main">
+              <span>Lembrar de mim</span>
+            </label>
+            <a href="#" class="text-brand-main font-semibold hover:underline">Esqueceu a senha?</a>
+          </div>
+
+          <button type="submit" class="w-full py-3 rounded-xl bg-brand-secondary hover:bg-brand-actionDark text-white font-bold text-xs shadow-md shadow-brand-secondary/20 flex items-center justify-center gap-2 transition active:scale-[0.99]">
+            <span>Entrar no Sistema</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </form>
+
+        <div class="mt-6 pt-4 border-t border-brand-border text-center">
+          <p class="text-xs text-brand-muted">
+            Não tem uma conta cadastrada? 
+            <button onclick="toggleRegisterModal()" class="text-brand-main font-bold hover:underline">Criar nova conta de morador ou técnico</button>
+          </p>
+        </div>
+
+        <div class="mt-4 p-3 bg-brand-light/60 rounded-xl border border-brand-secondary/30 flex items-start gap-2.5">
+          <i class="fa-solid fa-shield-halved text-brand-main text-sm mt-0.5"></i>
+          <p class="text-[10px] text-brand-main leading-relaxed font-medium">
+            <strong>Proteção LGPD:</strong> Seus dados cadastrais e telefones são protegidos. Negociações e evidências permanecem no sistema com auditoria criptográfica.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TELA 2: BUSCA POR SERVIÇO E BAIRRO COM FILTROS RÁPIDOS -->
+    <!-- ================================================================= -->
+    <div id="view-search" class="view-screen active space-y-6">
+      
+      <!-- Banner de Boas-Vindas & Busca -->
+      <div class="bg-gradient-to-br from-brand-main via-sky-800 to-brand-secondary rounded-3xl p-6 sm:p-8 text-white shadow-sm relative overflow-hidden">
+        <div class="relative z-10 max-w-2xl">
+          <span class="inline-block bg-white/20 text-white text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full tracking-wider mb-2.5 backdrop-blur-sm">
+            Busca Local Inteligente
+          </span>
+          <h1 class="text-2xl sm:text-3xl font-extrabold leading-tight tracking-tight mb-2">
+            Buscar Profissional Qualificado
+          </h1>
+          <p class="text-xs sm:text-sm text-white/80 font-normal leading-relaxed mb-6">
+            Cruze o <strong>bairro de atendimento</strong> com a <strong>especialidade técnica</strong>. Veja certificados válidos e fotos de serviços reais antes de contratar.
+          </p>
+
+          <!-- Caixa de Busca -->
+          <div class="bg-white rounded-2xl p-3 sm:p-4 text-brand-text shadow-lg grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+            
+            <div class="sm:col-span-5">
+              <label class="block text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1">Especialidade</label>
+              <div class="relative">
+                <select id="searchSpecialty" class="w-full pl-8 pr-3 py-2 bg-brand-bg border border-brand-border rounded-xl text-xs font-semibold text-brand-text focus:outline-none focus:border-brand-main">
+                  <option value="todos">Todas Especialidades</option>
+                  <option value="Eletricista" selected>Eletricista</option>
+                  <option value="Encanador">Encanador (Hidráulica)</option>
+                  <option value="Montador de Móveis">Montador de Móveis</option>
+                  <option value="Pintor">Pintura Residencial</option>
+                </select>
+                <i class="fa-solid fa-bolt text-brand-main absolute left-3 top-2.5 text-xs"></i>
+              </div>
+            </div>
+
+            <div class="sm:col-span-5">
+              <label class="block text-[10px] font-bold text-brand-muted uppercase tracking-wider mb-1">Bairro de Atendimento</label>
+              <div class="relative">
+                <input type="text" id="searchNeighborhood" value="Marco" placeholder="Ex.: Marco, Nazaré, Umarizal" class="w-full pl-8 pr-3 py-2 bg-brand-bg border border-brand-border rounded-xl text-xs font-semibold text-brand-text focus:outline-none focus:border-brand-main">
+                <i class="fa-solid fa-location-dot text-brand-main absolute left-3 top-2.5 text-xs"></i>
+              </div>
+            </div>
+
+            <div class="sm:col-span-2 flex items-end">
+              <button onclick="executeSearch()" id="btnSearch" class="w-full py-2.5 px-3 rounded-xl bg-brand-secondary hover:bg-brand-actionDark text-white font-bold text-xs flex items-center justify-center gap-1.5 transition shadow-sm active:scale-95">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span class="sm:hidden">Buscar</span>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Filtros Rápidos (Chips) -->
+          <div class="flex flex-wrap items-center gap-2 mt-4 text-xs font-medium">
+            <span class="text-[11px] text-white/80">Filtros rápidos:</span>
+            <button onclick="quickFilter('Marco', 'Eletricista')" class="px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 text-white text-[11px] transition">Eletricistas no Marco</button>
+            <button onclick="quickFilter('Nazaré', 'Encanador')" class="px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 text-white text-[11px] transition">Encanadores em Nazaré</button>
+            <button onclick="quickFilter('Umarizal', 'Montador de Móveis')" class="px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 text-white text-[11px] transition">Montadores no Umarizal</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Resumo da Busca e Contador de Tempo de Resposta (RNF03) -->
+      <div class="flex flex-wrap items-center justify-between gap-3 px-1">
+        <div>
+          <h2 class="text-base font-bold text-brand-text flex items-center gap-2">
+            Resultados Próximos
+            <span id="resultsCountBadge" class="text-xs px-2 py-0.5 rounded-full bg-brand-light text-brand-main font-extrabold">2 profissionais</span>
+          </h2>
+          <p class="text-xs text-brand-muted">Profissionais verificados com portfólio disponível para atendimento domiciliar.</p>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-semibold text-brand-muted">
+          <span class="flex items-center gap-1 text-emerald-700 bg-brand-chatLight px-2 py-1 rounded-lg border border-emerald-200">
+            <i class="fa-solid fa-bolt text-[10px]"></i>
+            <span id="responseTimeDisplay">Tempo: 0.18s (Máx 2s)</span>
+          </span>
+          <button onclick="navigateTo('view-compare')" class="text-brand-main font-bold hover:underline flex items-center gap-1">
+            <i class="fa-solid fa-code-compare"></i> Comparar lado a lado
+          </button>
+        </div>
+      </div>
+
+      <!-- Feedback de Carregamento (Simulação rápida) -->
+      <div id="searchLoadingState" class="hidden py-8 text-center">
+        <div class="inline-block w-8 h-8 border-[3px] border-brand-border border-t-brand-main rounded-full animate-spin mb-2"></div>
+        <p class="text-xs text-brand-muted font-medium">Cruzando bairros e especialidades com portfólio validado...</p>
+      </div>
+
+      <!-- Lista de Resultados (Grid de Cards) -->
+      <div id="professionalsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Preenchido via JavaScript -->
+      </div>
+
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TELA 3: COMPARAR PROFISSIONAIS LADO A LADO -->
+    <!-- ================================================================= -->
+    <div id="view-compare" class="view-screen space-y-5">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-extrabold text-brand-main">Comparar Profissionais</h2>
+          <p class="text-xs text-brand-muted">Compare notas nos 4 critérios objetivos, certificados e volume de obras comprovadas.</p>
+        </div>
+        <button onclick="navigateTo('view-search')" class="text-xs font-bold text-brand-muted hover:text-brand-main">
+          <i class="fa-solid fa-arrow-left mr-1"></i>Voltar para busca
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="comparisonContainer">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TELA 4: PERFIL DETALHADO DO PROFISSIONAL COM EVIDÊNCIAS TÉCNICAS -->
+    <!-- ================================================================= -->
+    <div id="view-profile" class="view-screen space-y-6">
+      
+      <!-- Botão Voltar -->
+      <button onclick="navigateTo('view-search')" class="text-xs font-bold text-brand-muted hover:text-brand-main flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-arrow-left"></i> Voltar aos resultados
+      </button>
+
+      <!-- Cartão Principal do Perfil -->
+      <div class="bg-white rounded-3xl p-6 border border-brand-border shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-brand-border">
+          
+          <div class="flex items-center gap-4">
+            <div id="profileAvatar" class="w-16 h-16 rounded-2xl bg-brand-light text-brand-main font-extrabold text-xl flex items-center justify-center shadow-inner border border-brand-secondary/30">
+              CS
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 id="profileName" class="text-xl font-extrabold text-brand-text">Carlos Silva</h2>
+                <span class="verified-badge text-[10px] bg-brand-chatLight text-brand-main border border-brand-secondary font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <i class="fa-solid fa-circle-check"></i> Verificado
+                </span>
+              </div>
+              <p id="profileSpecialtyRegion" class="text-xs text-brand-muted font-medium mt-0.5">Eletricista Residencial • Bairro Marco</p>
+              
+              <div class="flex items-center gap-2 mt-1.5">
+                <div class="text-brand-gold text-xs font-bold flex items-center gap-1">
+                  <i class="fa-solid fa-star"></i>
+                  <span id="profileScoreOverall">4.9</span>
+                </div>
+                <span class="text-slate-300">•</span>
+                <span id="profileTotalReviews" class="text-xs text-brand-muted">38 reparos avaliados</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ações do Cabeçalho -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="openChatFromProfile()" class="px-4 py-2.5 rounded-xl bg-brand-chat text-white font-bold text-xs shadow-md shadow-brand-chat/20 flex items-center gap-2 hover:bg-brand-chatDark transition">
+              <i class="fa-solid fa-comment-dots"></i>
+              <span>💬 Chat por mensagem</span>
+            </button>
+            <button onclick="openHireModal()" class="px-4 py-2.5 rounded-xl bg-brand-secondary text-white font-bold text-xs shadow-md shadow-brand-secondary/20 flex items-center gap-2 hover:bg-brand-actionDark transition">
+              <i class="fa-solid fa-handshake"></i>
+              <span>Contratar Reparo</span>
+            </button>
+            <button onclick="openReportModal()" class="p-2.5 rounded-xl border border-red-200 text-brand-alert hover:bg-red-50 text-xs font-bold transition" title="Denunciar irregularidade">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Seções em Grid: Certificados e Avaliação Multicritério -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+          
+          <!-- 1. Certificados Validados -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-xs font-extrabold text-brand-main uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-certificate text-brand-secondary"></i>
+                Certificados Validados
+              </h3>
+              <span class="text-[10px] text-emerald-700 bg-brand-light font-bold px-2 py-0.5 rounded-full">Comprovação Técnica</span>
+            </div>
+
+            <div class="space-y-2.5" id="profileCertsContainer">
+              <!-- Preenchido via JS -->
+            </div>
+          </div>
+
+          <!-- 2. Avaliação Multicritério (4 Eixos Objetivos) -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-xs font-extrabold text-brand-main uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-list-check text-brand-secondary"></i>
+                Avaliação Multicritério
+              </h3>
+              <span class="text-[10px] text-brand-muted">Nota de 1.0 a 5.0</span>
+            </div>
+
+            <div class="bg-brand-bg p-4 rounded-2xl border border-brand-border space-y-3" id="profileCriteriaContainer">
+              <!-- Preenchido via JS -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 3. Portfólio de Obras Anteriores (Fotos Reais) -->
+        <div class="mt-8 pt-6 border-t border-brand-border">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-sm font-extrabold text-brand-text flex items-center gap-1.5">
+                <i class="fa-solid fa-images text-brand-main"></i>
+                Portfólio de Obras e Reparos Reais
+              </h3>
+              <p class="text-xs text-brand-muted">Trabalhos executados na região metropolitana com comprovação dos contratantes.</p>
+            </div>
+            <span class="text-xs text-brand-muted font-semibold">6 fotos no acervo</span>
+          </div>
+
+          <!-- Grid de Fotos com Categoria -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="profilePortfolioGallery">
+            <!-- Renderizado via JS com fotos estilizadas em SVG e mockups técnicos -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TELA 5: CHAT INTERNO (ALINHAMENTO DE ESCOPO E ORÇAMENTO AUDITÁVEL) -->
+    <!-- ================================================================= -->
+    <div id="view-chat" class="view-screen">
+      <div class="bg-white rounded-3xl border border-brand-border shadow-sm overflow-hidden flex flex-col h-[560px]">
+        
+        <!-- Header do Chat (Identidade Azul) -->
+        <div class="bg-gradient-to-r from-brand-chat to-brand-chatDark text-white px-5 py-3.5 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-white/20 text-white font-bold flex items-center justify-center text-xs">
+              CS
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 id="chatProfessionalName" class="font-bold text-xs sm:text-sm">Carlos Silva (Eletricista)</h3>
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              </div>
+              <p id="chatProfessionalStatus" class="text-[10px] text-white/80">Canal interno auditável • Proteção de dados ativos</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="openHireModal()" class="px-3 py-1.5 rounded-lg bg-brand-secondary hover:bg-brand-actionDark text-white font-bold text-xs transition flex items-center gap-1">
+              <i class="fa-solid fa-receipt text-[11px]"></i>
+              <span>Contratar</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Alerta de Segurança e Privacidade -->
+        <div class="bg-brand-chatLight px-4 py-2 border-b border-brand-chatLight flex items-center gap-2 text-[11px] text-brand-chat">
+          <i class="fa-solid fa-lock text-xs"></i>
+          <span><strong>Negociação Protegida:</strong> Mantenha o alinhamento de escopo no Reparos+. Números externos e dados sensíveis são mascarados até o acordo formal.</span>
+        </div>
+
+        <!-- Área das Mensagens: começa vazia para permitir uma conversa real na demonstração -->
+        <div class="flex-1 p-4 overflow-y-auto space-y-3 custom-scrollbar bg-slate-50/50" id="chatMessagesContainer">
+          <div id="chatEmptyState" class="h-full min-h-32 flex flex-col items-center justify-center text-center text-brand-muted gap-2">
+            <i class="fa-regular fa-comments text-3xl text-brand-chat/60"></i>
+            <p class="text-xs">Nenhuma mensagem ainda. Escreva abaixo para iniciar a conversa.</p>
+          </div>
+        </div>
+
+        <!-- Barra de Input de Mensagem -->
+        <form onsubmit="handleSendChatMessage(event)" class="p-3 bg-white border-t border-brand-border flex items-center gap-2">
+          <input type="text" id="chatMessageInput" placeholder="Digite sua mensagem..." class="flex-1 px-3.5 py-2.5 bg-white border border-brand-border rounded-xl text-xs focus:outline-none focus:border-brand-chat text-brand-text" autocomplete="off">
+          <button type="submit" aria-label="Enviar mensagem" class="w-10 h-10 rounded-xl bg-brand-chat hover:bg-brand-chatDark text-white flex items-center justify-center transition shadow-sm">
+            <i class="fa-solid fa-paper-plane text-xs"></i>
+          </button>
+        </form>
+
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TELA 6: PAGAMENTO EM CUSTÓDIA & DISCRIMINAÇÃO FINANCEIRA -->
+    <!-- ================================================================= -->
+    <div id="view-payment" class="view-screen max-w-2xl mx-auto space-y-5">
+      
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-extrabold text-brand-main">Pagamento pelo Aplicativo</h2>
+          <p class="text-xs text-brand-muted">Custódia segura inspirada no modelo Uber/99 com liberação após aceite mútuo.</p>
+        </div>
+        <button onclick="navigateTo('view-profile')" class="text-xs font-bold text-brand-muted hover:text-brand-main">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Fluxo de 3 Atores da Custódia -->
+      <div class="grid grid-cols-3 gap-2 text-center text-xs">
+        <div class="p-3 bg-white rounded-2xl border border-brand-border shadow-sm">
+          <span class="w-6 h-6 rounded-full bg-brand-light text-brand-main font-bold flex items-center justify-center mx-auto mb-1 text-[11px]">1</span>
+          <strong class="block text-brand-text text-[11px]">Cliente</strong>
+          <p class="text-[10px] text-brand-muted">Paga integralmente no app</p>
+        </div>
+        <div class="p-3 bg-brand-light/70 rounded-2xl border border-brand-secondary/40 shadow-sm">
+          <span class="w-6 h-6 rounded-full bg-brand-main text-white font-bold flex items-center justify-center mx-auto mb-1 text-[11px]">2</span>
+          <strong class="block text-brand-main text-[11px]">Plataforma</strong>
+          <p class="text-[10px] text-brand-muted">Custódia e garantia</p>
+        </div>
+        <div class="p-3 bg-white rounded-2xl border border-brand-border shadow-sm">
+          <span class="w-6 h-6 rounded-full bg-brand-light text-brand-main font-bold flex items-center justify-center mx-auto mb-1 text-[11px]">3</span>
+          <strong class="block text-brand-text text-[11px]">Técnico</strong>
+          <p class="text-[10px] text-brand-muted">Recebe após aceite</p>
+        </div>
+      </div>
+
+      <!-- Discriminação Transparente do Orçamento (R$ 100,00) -->
+      <div class="bg-white rounded-3xl p-5 border border-brand-border shadow-sm space-y-3">
+        <h3 class="text-xs font-extrabold text-brand-text uppercase tracking-wider">Discriminação de Valores</h3>
+        
+        <div class="space-y-2 text-xs">
+          <div class="flex justify-between text-brand-muted">
+            <span>Valor acordado do reparo residencial</span>
+            <span id="paymentGrossValue" class="font-semibold text-brand-text">R$ 100,00</span>
+          </div>
+          <div class="flex justify-between text-brand-muted">
+            <span>Taxa operacional da plataforma (12% comissão)</span>
+            <span id="paymentFeeValue" class="font-semibold text-brand-alert">- R$ 12,00</span>
+          </div>
+          <div class="pt-2 border-t border-brand-border flex justify-between text-sm font-extrabold">
+            <span id="paymentProfessionalLabel" class="text-brand-main">Repasse líquido ao profissional (Carlos Silva)</span>
+            <span id="paymentNetValue" class="text-brand-main">R$ 88,00</span>
+          </div>
+        </div>
+
+        <div class="p-3 bg-brand-chatLight rounded-xl text-[11px] text-brand-main font-medium border border-emerald-200">
+          <i class="fa-solid fa-shield-halved mr-1"></i>
+          <strong>Garantia de Custódia:</strong> O valor permanece guardado na plataforma. O repasse de R$ 88,00 só é debitado após o contratante confirmar a conclusão da obra.
+        </div>
+      </div>
+
+      <!-- Métodos de Pagamento -->
+      <div class="bg-white rounded-3xl p-5 border border-brand-border shadow-sm space-y-4">
+        <h3 class="text-xs font-extrabold text-brand-text uppercase tracking-wider">Escolha a Forma de Pagamento</h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          
+          <label class="p-3.5 rounded-2xl border-2 border-brand-main bg-brand-light/30 cursor-pointer flex flex-col justify-between transition">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-extrabold text-xs text-brand-main">PIX</span>
+              <input type="radio" name="paymentMethod" value="pix" checked class="text-brand-main">
+            </div>
+            <p class="text-[10px] text-brand-muted leading-tight">Instantâneo, baixa taxa e liberação ágil da ordem.</p>
+          </label>
+
+          <label class="p-3.5 rounded-2xl border border-brand-border bg-white hover:border-brand-main cursor-pointer flex flex-col justify-between transition">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-extrabold text-xs text-brand-text">Cartão de Crédito</span>
+              <input type="radio" name="paymentMethod" value="card" class="text-brand-main">
+            </div>
+            <p class="text-[10px] text-brand-muted leading-tight">Opção de parcelamento para reparos maiores com antifraude.</p>
+          </label>
+
+          <label class="p-3.5 rounded-2xl border border-brand-border bg-white hover:border-brand-main cursor-pointer flex flex-col justify-between transition">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-extrabold text-xs text-brand-text">Carteira Digital</span>
+              <input type="radio" name="paymentMethod" value="wallet" class="text-brand-main">
+            </div>
+            <p class="text-[10px] text-brand-muted leading-tight">Saldo pré-recarregado para contratações recorrentes.</p>
+          </label>
+
+        </div>
+
+        <button onclick="confirmOrderPayment()" class="w-full py-3.5 rounded-2xl bg-brand-secondary hover:bg-brand-actionDark text-white font-extrabold text-xs shadow-md shadow-brand-secondary/20 flex items-center justify-center gap-2 transition active:scale-[0.99]">
+          <i class="fa-solid fa-lock"></i>
+          <span id="confirmPaymentText">Confirmar Pagamento de R$ 100,00 em Custódia</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TELA 7: AVALIAÇÃO MULTICRITÉRIO PÓS-SERVIÇO -->
+    <!-- ================================================================= -->
+    <div id="view-review" class="view-screen max-w-md mx-auto space-y-4">
+      <div class="bg-white rounded-3xl p-6 sm:p-7 border border-brand-border shadow-sm text-center">
+        
+        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-brand-gold font-extrabold text-xl flex items-center justify-center mx-auto mb-2">
+          <i class="fa-solid fa-star"></i>
+        </div>
+        <h2 class="text-xl font-extrabold text-brand-text">Avaliação Multicritério</h2>
+        <p id="reviewDescription" class="text-xs text-brand-muted mt-1">Pontue a execução do reparo elétrico realizado por <strong>Carlos Silva</strong> nos 4 eixos objetivos.</p>
+
+        <!-- Formulário com 4 eixos -->
+        <div class="space-y-4 text-left mt-6">
+          
+          <div>
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>1. Qualidade Técnica</span>
+              <span class="text-brand-gold font-extrabold" id="scoreValQualidade">5.0 ★</span>
+            </div>
+            <input type="range" min="1" max="5" step="0.1" value="5.0" oninput="updateRangeDisplay('Qualidade', this.value)" class="w-full accent-brand-gold">
+            <p class="text-[10px] text-brand-muted">Acabamento, funcionamento sem falhas e testes de isolamento.</p>
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>2. Pontualidade</span>
+              <span class="text-brand-gold font-extrabold" id="scoreValPontualidade">5.0 ★</span>
+            </div>
+            <input type="range" min="1" max="5" step="0.1" value="5.0" oninput="updateRangeDisplay('Pontualidade', this.value)" class="w-full accent-brand-gold">
+            <p class="text-[10px] text-brand-muted">Chegada no horário marcado e cumprimento do tempo acordado.</p>
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>3. Atendimento e Limpeza</span>
+              <span class="text-brand-gold font-extrabold" id="scoreValAtendimento">4.8 ★</span>
+            </div>
+            <input type="range" min="1" max="5" step="0.1" value="4.8" oninput="updateRangeDisplay('Atendimento', this.value)" class="w-full accent-brand-gold">
+            <p class="text-[10px] text-brand-muted">Postura, clareza nas explicações e recolhimento de resíduos.</p>
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>4. Cumprimento do Orçamento</span>
+              <span class="text-brand-gold font-extrabold" id="scoreValOrcamento">5.0 ★</span>
+            </div>
+            <input type="range" min="1" max="5" step="0.1" value="5.0" oninput="updateRangeDisplay('Orcamento', this.value)" class="w-full accent-brand-gold">
+            <p class="text-[10px] text-brand-muted">Sem cobranças surpresas fora do valor fechado no app.</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-brand-text mb-1">Comentário Público com Evidência</label>
+            <textarea placeholder="Descreva brevemente como foi o serviço..." rows="3" class="w-full p-3 bg-brand-bg border border-brand-border rounded-xl text-xs text-brand-text focus:outline-none focus:border-brand-main"></textarea>
+          </div>
+
+          <button onclick="submitReviewAction()" class="w-full py-3 rounded-xl bg-brand-secondary hover:bg-brand-actionDark text-white font-bold text-xs shadow-md shadow-brand-secondary/20 transition active:scale-95">
+            Publicar Avaliação por Critérios
+          </button>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TELA 8: ÁREA DO PROFISSIONAL (PAINEL 80% COMPLETO) -->
+    <!-- ================================================================= -->
+    <div id="view-pro-dashboard" class="view-screen space-y-5">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-brand-main bg-brand-light px-2.5 py-1 rounded-full">Área do Prestador</span>
+          <h2 class="text-xl font-extrabold text-brand-text mt-1">Painel do Profissional</h2>
+          <p class="text-xs text-brand-muted">Gerencie portfólio, documentações validadas e construa reputação técnica sustentável.</p>
+        </div>
+        <button onclick="showProPortfolioManager()" class="px-3.5 py-2 rounded-xl bg-brand-secondary text-white font-bold text-xs hover:bg-brand-actionDark transition flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-plus"></i> Adicionar Foto de Obra
+        </button>
+      </div>
+
+      <!-- Barra de Progresso do Perfil (80% Completo) -->
+      <div class="bg-white rounded-3xl p-5 border border-brand-border shadow-sm space-y-3">
+        <div class="flex justify-between items-center text-xs">
+          <span class="font-extrabold text-brand-main flex items-center gap-1.5">
+            <i class="fa-solid fa-chart-line"></i>
+            Perfil 80% Completo
+          </span>
+          <span class="text-brand-muted font-semibold">Falta adicionar comprovante de residência</span>
+        </div>
+        <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden p-0.5 border border-brand-border">
+          <div class="bg-gradient-to-r from-brand-secondary to-brand-main h-full rounded-full w-[80%] transition-all duration-500"></div>
+        </div>
+        <p class="text-[11px] text-brand-muted">
+          Perfis 100% completos com cursos certificados recebem <strong>3x mais chamados de reparos</strong> na sua região.
+        </p>
+      </div>
+
+      <!-- 3 Cards de Indicadores do Dashboard -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        
+        <div class="bg-white p-4 rounded-2xl border border-brand-border shadow-sm flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-brand-chatLight text-brand-main flex items-center justify-center font-extrabold text-xl">
+            6
+          </div>
+          <div>
+            <strong class="text-xs text-brand-text block">Fotos no Portfólio</strong>
+            <span class="text-[10px] text-brand-muted">Obras reais comprovadas</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-brand-border shadow-sm flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-brand-chatLight text-brand-chat flex items-center justify-center font-extrabold text-xl">
+            3
+          </div>
+          <div>
+            <strong class="text-xs text-brand-text block">Certificados</strong>
+            <span class="text-[10px] text-brand-muted">Validados via auditoria</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-brand-border shadow-sm flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-amber-50 text-brand-gold flex items-center justify-center font-extrabold text-xl">
+            18
+          </div>
+          <div>
+            <strong class="text-xs text-brand-text block">Avaliações por Critérios</strong>
+            <span class="text-[10px] text-brand-muted">Média consolidada: 4.9 ★</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Ações do Painel e Chamados Recebidos -->
+      <div class="bg-white rounded-3xl p-5 border border-brand-border shadow-sm space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-extrabold text-brand-text uppercase tracking-wider">Chamados Recebidos Recentemente</h3>
+          <span class="text-[10px] bg-brand-chatLight text-brand-main font-bold px-2 py-0.5 rounded-full">1 pendente</span>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-brand-bg border border-brand-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div>
+            <div class="flex items-center gap-2">
+              <strong class="text-brand-text">Quadro com aquecimento no chuveiro</strong>
+              <span class="text-[10px] bg-brand-chatLight text-brand-chat px-2 py-0.5 rounded font-bold">Bairro Marco</span>
+            </div>
+            <p class="text-[11px] text-brand-muted mt-0.5">Cliente: Morador Residencial • Enviado via Chat Interno</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="navigateTo('view-chat')" class="px-3 py-1.5 rounded-xl bg-brand-chat text-white font-bold text-xs hover:bg-brand-chatDark transition">
+              Responder no Chat
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TELA 9: PAINEL DE MODERAÇÃO E DENÚNCIA (ATIVIDADE ADMINISTRATIVA) -->
+    <!-- ================================================================= -->
+    <div id="view-moderation" class="view-screen space-y-5">
+      
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-brand-alert bg-red-100 px-2.5 py-1 rounded-full">Gestão & Segurança</span>
+          <h2 class="text-xl font-extrabold text-brand-text mt-1">Painel de Moderação Ativa</h2>
+          <p class="text-xs text-brand-muted">Análise de denúncias comunitárias de fotos forjadas, perfis suspeitos e cobranças indevidas.</p>
+        </div>
+        <span class="text-xs font-bold text-brand-alert bg-red-50 border border-red-200 px-3 py-1.5 rounded-xl">
+          <i class="fa-solid fa-triangle-exclamation mr-1"></i>2 denúncias ativas
+        </span>
+      </div>
+
+      <!-- Tabela / Lista de Denúncias -->
+      <div class="bg-white rounded-3xl p-5 border border-brand-border shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left">
+            <thead>
+              <tr class="text-brand-muted border-b border-brand-border">
+                <th class="pb-2.5 font-bold">Tipo</th>
+                <th class="pb-2.5 font-bold">Perfil / Alvo</th>
+                <th class="pb-2.5 font-bold">Motivo Informado</th>
+                <th class="pb-2.5 font-bold">Status</th>
+                <th class="pb-2.5 font-bold text-right">Ações Rápidas</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-brand-border/60">
+              
+              <tr class="hover:bg-slate-50">
+                <td class="py-3 font-bold text-brand-alert">
+                  <i class="fa-solid fa-image mr-1"></i> Foto Forjada
+                </td>
+                <td class="py-3">Prestador #4082 (Encanador)</td>
+                <td class="py-3 text-brand-muted">Imagem retirada de catálogo do Pinterest sem ser obra própria.</td>
+                <td class="py-3">
+                  <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">Em Análise</span>
+                </td>
+                <td class="py-3 text-right space-x-1">
+                  <button onclick="handleModAction('validar')" class="px-2 py-1 rounded bg-brand-chatLight text-brand-chat font-bold hover:bg-emerald-200">Validar</button>
+                  <button onclick="handleModAction('corrigir')" class="px-2 py-1 rounded bg-brand-chatLight text-brand-chat font-bold hover:bg-blue-200">Pedir Correção</button>
+                  <button onclick="handleModAction('bloquear')" class="px-2 py-1 rounded bg-red-100 text-red-800 font-bold hover:bg-red-200">Bloquear</button>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-slate-50">
+                <td class="py-3 font-bold text-brand-alert">
+                  <i class="fa-solid fa-coins mr-1"></i> Cobrança Indevida
+                </td>
+                <td class="py-3">Técnico Autônomo #119</td>
+                <td class="py-3 text-brand-muted">Tentativa de cobrança de taxa de visita não discriminada no chat.</td>
+                <td class="py-3">
+                  <span class="px-2 py-0.5 rounded-full bg-brand-chatLight text-brand-chat text-[10px] font-bold">Auditando Chat</span>
+                </td>
+                <td class="py-3 text-right space-x-1">
+                  <button onclick="handleModAction('validar')" class="px-2 py-1 rounded bg-brand-chatLight text-brand-chat font-bold hover:bg-emerald-200">Validar</button>
+                  <button onclick="handleModAction('bloquear')" class="px-2 py-1 rounded bg-red-100 text-red-800 font-bold hover:bg-red-200">Bloquear</button>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TELA 10: FLUXO DIDÁTICO E ESTRATÉGICO DO PROTÓTIPO -->
+    <!-- ================================================================= -->
+    <div id="view-flow" class="view-screen space-y-6">
+      
+      <div class="text-center max-w-2xl mx-auto">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-brand-main bg-brand-light px-3 py-1 rounded-full">Jornada 2026</span>
+        <h2 class="text-2xl font-extrabold text-brand-main mt-1">Fluxo Completo do Reparos+</h2>
+        <p class="text-xs text-brand-muted mt-1">Do problema ao protótipo: previsibilidade e transparência para o morador e valorização para o profissional.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        
+        <div class="bg-white p-5 rounded-2xl border border-brand-border shadow-sm space-y-2">
+          <div class="w-8 h-8 rounded-xl bg-brand-light text-brand-main font-extrabold flex items-center justify-center text-xs">1</div>
+          <h3 class="text-sm font-bold text-brand-text">1. Entrar com Identificação</h3>
+          <p class="text-xs text-brand-muted">Acesso com CPF/E-mail positivo para garantir rastreabilidade civil de ambas as partes.</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-brand-border shadow-sm space-y-2">
+          <div class="w-8 h-8 rounded-xl bg-brand-light text-brand-main font-extrabold flex items-center justify-center text-xs">2</div>
+          <h3 class="text-sm font-bold text-brand-text">2. Buscar Bairro + Nicho</h3>
+          <p class="text-xs text-brand-muted">Sem grupos caóticos de WhatsApp. Cruzamento veloz de especialidade com proximidade.</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-brand-border shadow-sm space-y-2">
+          <div class="w-8 h-8 rounded-xl bg-brand-light text-brand-main font-extrabold flex items-center justify-center text-xs">3</div>
+          <h3 class="text-sm font-bold text-brand-text">3. Comparar Evidências</h3>
+          <p class="text-xs text-brand-muted">Análise de certificados técnicos validados (NR-10, Senai) e portfólio fotográfico real.</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-brand-border shadow-sm space-y-2">
+          <div class="w-8 h-8 rounded-xl bg-brand-chatLight text-brand-chat font-bold flex items-center justify-center text-xs">4</div>
+          <h3 class="text-sm font-bold text-brand-text">4. Chat Interno Auditável</h3>
+          <p class="text-xs text-brand-muted">Alinhamento de escopo e formalização de orçamentos diretamente na plataforma.</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-brand-border shadow-sm space-y-2">
+          <div class="w-8 h-8 rounded-xl bg-brand-light text-brand-main font-extrabold flex items-center justify-center text-xs">5</div>
+          <h3 class="text-sm font-bold text-brand-text">5. Pagamento em Custódia</h3>
+          <p class="text-xs text-brand-muted">Pagamento seguro via PIX/Cartão com repasse liberado somente após o aceite mútuo.</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-brand-border shadow-sm space-y-2">
+          <div class="w-8 h-8 rounded-xl bg-amber-100 text-brand-gold font-bold flex items-center justify-center text-xs">6</div>
+          <h3 class="text-sm font-bold text-brand-text">6. Avaliar por 4 Critérios</h3>
+          <p class="text-xs text-brand-muted">Qualidade, pontualidade, atendimento e orçamento. Fim das notas rasas de 5 estrelas.</p>
+        </div>
+
+      </div>
+
+      <!-- Banner de Restrições Mantidas do MVP -->
+      <div class="bg-brand-light p-4 rounded-2xl border border-brand-secondary/40 text-center text-xs text-brand-main font-semibold">
+        Restrições do Projeto: Prazo de 6 meses • Orçamento de R$ 50.000 • Web App Responsivo • Arquitetura pronta para Firebase/Node.js
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Modal: Contratação de Reparo -->
+  <div id="modalHire" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-xl border border-brand-border">
+      <div class="flex items-center justify-between">
+        <h3 class="font-extrabold text-base text-brand-text">Formalizar Contratação</h3>
+        <button onclick="closeModal('modalHire')" class="text-brand-muted hover:text-brand-text"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p id="hireDescription" class="text-xs text-brand-muted">O valor negociado via chat com <strong>Carlos Silva</strong> será enviado para a tela de pagamento em custódia segura.</p>
+      
+      <div class="p-3 bg-brand-bg rounded-xl border border-brand-border text-xs space-y-1">
+        <span class="text-brand-muted block">Serviço selecionado:</span>
+        <strong id="hireServiceName" class="text-brand-text text-sm">Revisão de Quadro Elétrico Residencial</strong>
+        <p id="hireServicePrice" class="text-brand-main font-extrabold text-sm">R$ 100,00 (Total)</p>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button onclick="closeModal('modalHire')" class="flex-1 py-2.5 rounded-xl border border-brand-border text-xs font-bold text-brand-muted hover:bg-slate-50">Cancelar</button>
+        <button onclick="goToPaymentFromModal()" class="flex-1 py-2.5 rounded-xl bg-brand-secondary text-white text-xs font-bold hover:bg-brand-actionDark">Avançar para Pagamento</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Denúncia de Irregularidade -->
+  <div id="modalReport" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-xl border border-red-200">
+      <div class="flex items-center justify-between">
+        <h3 class="font-extrabold text-base text-brand-alert flex items-center gap-1.5">
+          <i class="fa-solid fa-triangle-exclamation"></i> Denunciar Irregularidade
+        </h3>
+        <button onclick="closeModal('modalReport')" class="text-brand-muted hover:text-brand-text"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      
+      <p class="text-xs text-brand-muted">Sua denúncia será encaminhada ao painel de moderação administrativa para auditoria.</p>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-brand-text mb-1">Motivo Principal</label>
+          <select id="reportCategory" class="w-full p-2.5 bg-brand-bg border border-brand-border rounded-xl text-xs font-medium text-brand-text focus:outline-none">
+            <option value="fake_photo">Fotos forjadas / Imagens de catálogo não autorizadas</option>
+            <option value="suspicious_profile">Perfil suspeito / Informações falsas de certificados</option>
+            <option value="improper_charge">Cobrança indevida fora do orçamento acertado</option>
+            <option value="other">Outra conduta inadequada</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-brand-text mb-1">Detalhes e Evidências</label>
+          <textarea id="reportDetails" rows="3" placeholder="Explique detalhadamente o ocorrido para a moderação..." class="w-full p-2.5 bg-brand-bg border border-brand-border rounded-xl text-xs text-brand-text focus:outline-none"></textarea>
+        </div>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button onclick="closeModal('modalReport')" class="flex-1 py-2.5 rounded-xl border border-brand-border text-xs font-bold text-brand-muted">Cancelar</button>
+        <button onclick="submitReportAction()" class="flex-1 py-2.5 rounded-xl bg-brand-alert text-white text-xs font-bold hover:bg-red-700">Enviar para Moderação</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Notificação Toast / Mensagens de Sucesso -->
+  <div id="toastNotification" class="fixed bottom-20 md:bottom-6 right-4 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 border border-slate-700 text-xs font-semibold">
+      <i id="toastIcon" class="fa-solid fa-circle-check text-brand-secondary text-base"></i>
+      <span id="toastMessage">Operação realizada com sucesso!</span>
+    </div>
+  </div>
+
+  <!-- Barra de Navegação Inferior (Exclusiva Mobile) -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-brand-border px-3 py-2 z-40 flex justify-around items-center text-center">
+    <button onclick="navigateTo('view-search')" class="flex flex-col items-center gap-1 text-brand-main">
+      <i class="fa-solid fa-magnifying-glass text-base"></i>
+      <span class="text-[9px] font-bold">Buscar</span>
+    </button>
+    <button onclick="navigateTo('view-compare')" class="flex flex-col items-center gap-1 text-brand-muted hover:text-brand-main">
+      <i class="fa-solid fa-code-compare text-base"></i>
+      <span class="text-[9px] font-semibold">Comparar</span>
+    </button>
+    <button onclick="navigateTo('view-chat')" class="flex flex-col items-center gap-1 text-brand-chat">
+      <i class="fa-solid fa-comment-dots text-base"></i>
+      <span class="text-[9px] font-bold">Chat</span>
+    </button>
+    <button onclick="navigateTo('view-pro-dashboard')" class="flex flex-col items-center gap-1 text-brand-muted hover:text-brand-main">
+      <i class="fa-solid fa-id-card-clip text-base"></i>
+      <span class="text-[9px] font-semibold">Técnico</span>
+    </button>
+    <button onclick="navigateTo('view-flow')" class="flex flex-col items-center gap-1 text-brand-muted hover:text-brand-main">
+      <i class="fa-solid fa-route text-base"></i>
+      <span class="text-[9px] font-semibold">Fluxo</span>
+    </button>
+  </nav>
+
+  <!-- Rodapé Institucional -->
+  <footer class="mt-auto border-t border-brand-border bg-white text-brand-muted py-6 px-4 text-center text-xs">
+    <div class="max-w-5xl mx-auto space-y-2">
+      <p class="font-semibold text-brand-text">
+        "Mais transparência e previsibilidade para quem contrata. Mais visibilidade, respeito e valorização para quem presta o serviço."
+      </p>
+      <p class="text-[11px]">
+        Reparos+ • Protótipo Funcional Demonstrativo 2026 • Área de Serviços
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Base de dados em memória demonstrativa
+    const professionalsData = [
+      {
+        id: 'carlos',
+        name: 'Carlos Silva',
+        initials: 'CS',
+        specialty: 'Eletricista',
+        region: 'Bairro Marco',
+        neighborhoods: ['Marco', 'Umarizal', 'Nazaré'],
+        overallScore: 4.9,
+        reviewsCount: 38,
+        priceEstimate: 'R$ 80 - R$ 140',
+        verified: true,
+        certs: [
+          { name: 'NR-10 Segurança em Instalações', institution: 'SENAI', status: '✓ Verificado' },
+          { name: 'Eletrotécnica Residencial', institution: 'SENAI PA', status: '✓ Verificado' }
+        ],
+        criteria: {
+          qualidade: 4.9,
+          pontualidade: 5.0,
+          atendimento: 4.8,
+          orcamento: 4.6
+        },
+        portfolio: [
+          { title: 'Quadro de Disjuntores', category: 'Quadro', color: '#12355B', desc: 'Revisão e substituição de barramento' },
+          { title: 'Fiação Reforçada 6mm', category: 'Fiação', color: '#0369a1', desc: 'Troca de fiação para chuveiro elétrico' },
+          { title: 'Tomadas e Interruptores', category: 'Tomadas', color: '#FFC857', desc: 'Instalação de circuito independente 20A' }
+        ]
+      },
+      {
+        id: 'marcos',
+        name: 'Marcos Lima',
+        initials: 'ML',
+        specialty: 'Eletricista',
+        region: 'Bairro Marco',
+        neighborhoods: ['Marco', 'Pedreira', 'Guamá'],
+        overallScore: 4.7,
+        reviewsCount: 24,
+        priceEstimate: 'R$ 70 - R$ 130',
+        verified: true,
+        certs: [
+          { name: 'NR-10 Básico', institution: 'IFPA', status: '✓ Verificado' },
+          { name: 'Instalações de Baixa Tensão', institution: 'SENAI', status: '✓ Verificado' }
+        ],
+        criteria: {
+          qualidade: 4.7,
+          pontualidade: 4.6,
+          atendimento: 4.8,
+          orcamento: 4.9
+        },
+        portfolio: [
+          { title: 'Instalação Luminárias LED', category: 'Iluminação', color: '#12355B', desc: 'Pontos em gesso e fitas de led' },
+          { title: 'Troca de Chave Geral', category: 'Quadro', color: '#0369a1', desc: 'Adequação de DPS e aterramento' },
+          { title: 'Rede Elétrica Sala', category: 'Fiação', color: '#FFC857', desc: 'Circuitos dedicados para climatizador' }
+        ]
+      },
+      {
+        id: 'rodrigo',
+        name: 'Rodrigo Santos',
+        initials: 'RS',
+        specialty: 'Encanador',
+        region: 'Bairro Nazaré',
+        neighborhoods: ['Nazaré', 'Marco', 'Batista Campos'],
+        overallScore: 4.8,
+        reviewsCount: 31,
+        priceEstimate: 'R$ 90 - R$ 160',
+        verified: true,
+        certs: [
+          { name: 'Instalações Hidráulicas Prediais', institution: 'SENAI', status: '✓ Verificado' }
+        ],
+        criteria: {
+          qualidade: 4.9,
+          pontualidade: 4.7,
+          atendimento: 4.8,
+          orcamento: 4.8
+        },
+        portfolio: [
+          { title: 'Vazamento em Registro', category: 'Hidráulica', color: '#0284c7', desc: 'Troca de reparo de gaveta sem quebra excessiva' },
+          { title: 'Instalação de Caixa d’Água', category: 'Reservatório', color: '#0369a1', desc: 'Boia e tubulação de extravasor' }
+        ]
+      }
+    ];
+
+    let currentSelectedPro = professionalsData[0];
+    let currentUserRole = 'customer'; // 'customer' ou 'professional'
+    let currentUserLoggedIn = false;
+
+    // Inicialização da aplicação
+    document.addEventListener('DOMContentLoaded', () => {
+      executeSearch();
+      renderComparisonView();
+      updateChatHeader();
+      updateHireModal();
+      updatePaymentView();
+      updateReviewView();
+      switchAuthRole('customer');
+      updateChatHeader();
+    });
+
+    // Navegação entre telas do SPA
+    function navigateTo(viewId) {
+      document.querySelectorAll('.view-screen').forEach(el => {
+        el.classList.remove('active');
+      });
+
+      const target = document.getElementById(viewId);
+      if (target) {
+        target.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // Atualiza marcador de passos do fluxo se aplicável
+      updateFlowIndicator(viewId);
+    }
+
+    function updateFlowIndicator(viewId) {
+      const stepMap = {
+        'view-auth': 1,
+        'view-search': 2,
+        'view-compare': 3,
+        'view-profile': 4,
+        'view-chat': 5,
+        'view-payment': 5,
+        'view-review': 6
+      };
+      
+      const stepNumber = stepMap[viewId] || null;
+      if (stepNumber) {
+        document.querySelectorAll('.flow-step').forEach(btn => {
+          const step = parseInt(btn.getAttribute('data-step'), 10);
+          const circle = btn.querySelector('span:first-child');
+          if (step === stepNumber) {
+            btn.classList.add('text-brand-main', 'font-extrabold');
+            btn.classList.remove('text-brand-muted');
+            circle.classList.add('bg-brand-main', 'text-white');
+            circle.classList.remove('bg-brand-light', 'text-brand-main');
+          } else {
+            btn.classList.remove('text-brand-main', 'font-extrabold');
+            btn.classList.add('text-brand-muted');
+            circle.classList.remove('bg-brand-main', 'text-white');
+            circle.classList.add('bg-brand-light', 'text-brand-main');
+          }
+        });
+      }
+    }
+
+    function executeSearch() {
+      const loading = document.getElementById('searchLoadingState');
+      const grid = document.getElementById('professionalsGrid');
+      const countBadge = document.getElementById('resultsCountBadge');
+      const timeDisplay = document.getElementById('responseTimeDisplay');
+      
+      const specialtyInput = document.getElementById('searchSpecialty');
+      const neighborhoodInput = document.getElementById('searchNeighborhood');
+
+      if (!loading || !grid || !countBadge || !timeDisplay || !specialtyInput || !neighborhoodInput) {
+        console.error('Elementos da busca não encontrados.');
+        return;
+      }
+
+      const specialty = specialtyInput.value;
+      const neighborhood = neighborhoodInput.value.trim().toLowerCase();
+
+      // Simulação de resposta rápida (RNF03: carregamento em até 2 segundos)
+      const startTime = performance.now();
+      loading.classList.remove('hidden');
+      grid.innerHTML = '';
+
+      setTimeout(() => {
+        const filtered = professionalsData.filter(pro => {
+          const matchSpecialty = specialty === 'todos' || pro.specialty.toLowerCase() === specialty.toLowerCase();
+          const matchNeighborhood = !neighborhood || pro.neighborhoods.some(n => n.toLowerCase().includes(neighborhood));
+          return matchSpecialty && matchNeighborhood;
+        });
+
+        const elapsed = ((performance.now() - startTime) / 1000).toFixed(2);
+        timeDisplay.textContent = `Tempo: ${elapsed}s (Máx 2s)`;
+        loading.classList.add('hidden');
+
+        countBadge.textContent = `${filtered.length} profissionais`;
+
+        if (filtered.length === 0) {
+          grid.innerHTML = `
+            <div class="col-span-2 bg-white rounded-3xl p-8 text-center border border-brand-border">
+              <i class="fa-solid fa-magnifying-glass text-3xl text-brand-muted/40 mb-2"></i>
+              <h3 class="text-sm font-bold text-brand-text">Nenhum profissional encontrado</h3>
+              <p class="text-xs text-brand-muted mt-1">Tente buscar por outro bairro (ex: Marco, Nazaré) ou mude a especialidade.</p>
+            </div>
+          `;
+          return;
+        }
+
+        filtered.forEach(pro => {
+          const card = document.createElement('div');
+          card.className = 'bg-white rounded-3xl p-5 border border-brand-border hover:border-brand-secondary/70 shadow-sm transition hover:shadow-md flex flex-col justify-between';
+          card.innerHTML = `
+            <div>
+              <div class="flex items-start justify-between gap-3 mb-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-2xl bg-brand-light text-brand-main font-bold flex items-center justify-center text-sm border border-brand-secondary/20">
+                    ${pro.initials}
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-1.5">
+                      <h3 class="font-extrabold text-sm text-brand-text">${pro.name}</h3>
+                      <span class="text-[9px] bg-brand-chatLight text-brand-main font-bold px-1.5 py-0.2 rounded">✓ Verificado</span>
+                    </div>
+                    <p class="text-xs text-brand-muted font-medium">${pro.specialty} • ${pro.region}</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-xs font-extrabold text-brand-gold flex items-center justify-end gap-1">
+                    <i class="fa-solid fa-star text-[10px]"></i> ${pro.overallScore}
+                  </span>
+                  <span class="text-[10px] text-brand-muted">(${pro.reviewsCount} notas)</span>
+                </div>
+              </div>
+
+              <!-- Mini-cards das 4 notas do perfil -->
+              <div class="grid grid-cols-4 gap-1.5 p-2 bg-brand-bg rounded-xl text-center text-[10px] mb-3">
+                <div><span class="text-brand-muted block">Qualid.</span><strong class="text-brand-text">${pro.criteria.qualidade}</strong></div>
+                <div><span class="text-brand-muted block">Pontual.</span><strong class="text-brand-text">${pro.criteria.pontualidade}</strong></div>
+                <div><span class="text-brand-muted block">Atend.</span><strong class="text-brand-text">${pro.criteria.atendimento}</strong></div>
+                <div><span class="text-brand-muted block">Orçam.</span><strong class="text-brand-text">${pro.criteria.orcamento}</strong></div>
+              </div>
+
+              <!-- Certificações em destaque -->
+              <div class="mb-3">
+                <span class="text-[10px] font-bold text-brand-muted block mb-1">Certificados comprovados:</span>
+                <div class="flex flex-wrap gap-1">
+                  ${pro.certs.map(c => `<span class="text-[10px] bg-brand-chatLight text-brand-main px-2 py-0.5 rounded-md font-medium border border-brand-chatLight">${c.name}</span>`).join('')}
+                </div>
+              </div>
+            </div>
+
+            <!-- Botões de Ação do Card -->
+            <div class="pt-3 border-t border-brand-border flex items-center justify-between gap-2">
+              <button onclick="openProfessionalProfile('${pro.id}')" class="flex-1 py-2 rounded-xl bg-brand-light hover:bg-brand-chatLight text-brand-main text-xs font-bold transition flex items-center justify-center gap-1">
+                <i class="fa-solid fa-eye text-[10px]"></i> Ver perfil
+              </button>
+              <button onclick="startChatWith('${pro.id}')" class="flex-1 py-2 rounded-xl bg-brand-chat hover:bg-brand-chatDark text-white text-xs font-bold transition flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-comment-dots text-[10px]"></i> Chat Mensagem
+              </button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+      }, 180);
+    }
+
+    function quickFilter(neighborhood, specialty) {
+      document.getElementById('searchNeighborhood').value = neighborhood;
+      document.getElementById('searchSpecialty').value = specialty;
+      executeSearch();
+    }
+
+    // Abertura do Perfil do Profissional
+    function openProfessionalProfile(proId) {
+      const pro = professionalsData.find(p => p.id === proId) || professionalsData[0];
+      currentSelectedPro = pro;
+
+      document.getElementById('profileName').textContent = pro.name;
+      document.getElementById('profileAvatar').textContent = pro.initials;
+      document.getElementById('profileSpecialtyRegion').textContent = `${pro.specialty} Residencial • ${pro.region}`;
+      document.getElementById('profileScoreOverall').textContent = pro.overallScore;
+      document.getElementById('profileTotalReviews').textContent = `${pro.reviewsCount} reparos avaliados`;
+
+      // Renderiza Certificados
+      const certsContainer = document.getElementById('profileCertsContainer');
+      certsContainer.innerHTML = pro.certs.map(c => `
+        <div class="p-3 bg-brand-bg rounded-2xl border border-brand-border flex items-center justify-between text-xs">
+          <div>
+            <strong class="text-brand-text block">${c.name}</strong>
+            <span class="text-[10px] text-brand-muted">Emitido por ${c.institution}</span>
+          </div>
+          <span class="text-[10px] text-brand-chat bg-brand-chatLight font-bold px-2 py-0.5 rounded-full">${c.status}</span>
+        </div>
+      `).join('');
+
+      // Renderiza Avaliação Multicritério com barras
+      const criteriaContainer = document.getElementById('profileCriteriaContainer');
+      criteriaContainer.innerHTML = `
+        <div>
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span>Qualidade Técnica</span>
+            <span class="text-brand-gold font-bold">${pro.criteria.qualidade} ★</span>
+          </div>
+          <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+            <div class="bg-brand-gold h-full rounded-full" style="width: ${(pro.criteria.qualidade / 5) * 100}%"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span>Pontualidade</span>
+            <span class="text-brand-gold font-bold">${pro.criteria.pontualidade} ★</span>
+          </div>
+          <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+            <div class="bg-brand-gold h-full rounded-full" style="width: ${(pro.criteria.pontualidade / 5) * 100}%"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span>Atendimento</span>
+            <span class="text-brand-gold font-bold">${pro.criteria.atendimento} ★</span>
+          </div>
+          <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+            <div class="bg-brand-gold h-full rounded-full" style="width: ${(pro.criteria.atendimento / 5) * 100}%"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span>Cumprimento do Orçamento</span>
+            <span class="text-brand-gold font-bold">${pro.criteria.orcamento} ★</span>
+          </div>
+          <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+            <div class="bg-brand-gold h-full rounded-full" style="width: ${(pro.criteria.orcamento / 5) * 100}%"></div>
+          </div>
+        </div>
+      `;
+
+      // Renderiza Galeria de Obras do Portfólio (Mock visual em SVG limpo)
+      const gallery = document.getElementById('profilePortfolioGallery');
+      gallery.innerHTML = pro.portfolio.map((item, idx) => `
+        <div class="bg-brand-bg rounded-2xl p-3 border border-brand-border flex flex-col justify-between hover:border-brand-main transition cursor-pointer" onclick="showToast('Visualizando obra: ${item.title}')">
+          <div class="h-24 rounded-xl flex items-center justify-center text-white mb-2 shadow-inner" style="background: linear-gradient(135deg, ${item.color}, #12355B);">
+            <div class="text-center p-2">
+              <i class="fa-solid fa-wrench text-xl opacity-80 mb-1"></i>
+              <span class="block text-[10px] font-extrabold uppercase tracking-wide">${item.category}</span>
+            </div>
+          </div>
+          <div>
+            <strong class="text-xs text-brand-text block">${item.title}</strong>
+            <p class="text-[10px] text-brand-muted leading-tight mt-0.5">${item.desc}</p>
+          </div>
+        </div>
+      `).join('');
+
+      navigateTo('view-profile');
+    }
+
+    // Comparação de profissionais
+    function renderComparisonView() {
+      const container = document.getElementById('comparisonContainer');
+      const pros = [professionalsData[0], professionalsData[1]];
+
+      container.innerHTML = pros.map(pro => `
+        <div class="bg-white rounded-3xl p-5 border border-brand-border shadow-sm space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-brand-light text-brand-main font-bold flex items-center justify-center text-sm">
+              ${pro.initials}
+            </div>
+            <div>
+              <h3 class="font-extrabold text-sm text-brand-text">${pro.name}</h3>
+              <p class="text-xs text-brand-muted">${pro.specialty} • ${pro.region}</p>
+            </div>
+          </div>
+
+          <div class="space-y-2 text-xs border-y border-brand-border py-3">
+            <div class="flex justify-between"><span>Média Geral</span><strong class="text-brand-gold">${pro.overallScore} ★</strong></div>
+            <div class="flex justify-between"><span>Qualidade Técnica</span><strong>${pro.criteria.qualidade}</strong></div>
+            <div class="flex justify-between"><span>Pontualidade</span><strong>${pro.criteria.pontualidade}</strong></div>
+            <div class="flex justify-between"><span>Atendimento</span><strong>${pro.criteria.atendimento}</strong></div>
+            <div class="flex justify-between"><span>Cumprimento Orçamento</span><strong>${pro.criteria.orcamento}</strong></div>
+            <div class="flex justify-between"><span>Certificados</span><strong>${pro.certs.length} validados</strong></div>
+            <div class="flex justify-between"><span>Fotos no Portfólio</span><strong>${pro.portfolio.length} obras</strong></div>
+          </div>
+
+          <button onclick="openProfessionalProfile('${pro.id}')" class="w-full py-2.5 rounded-xl bg-brand-main text-white font-bold text-xs hover:bg-brand-mainDark transition">
+            Ver Perfil Completo
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function startChatWith(proId) {
+      const pro = professionalsData.find(p => p.id === proId) || professionalsData[0];
+      currentSelectedPro = pro;
+      updateChatHeader();
+      updateHireModal();
+      navigateTo('view-chat');
+    }
+
+    function openChatFromProfile() {
+      updateChatHeader();
+      navigateTo('view-chat');
+    }
+
+    function updateChatHeader() {
+      const nameEl = document.getElementById('chatProfessionalName');
+      const statusEl = document.getElementById('chatProfessionalStatus');
+      const topNameEl = document.getElementById('userNameDisplay');
+      const residentName = (document.getElementById('authResidentName')?.value || '').trim();
+
+      // O nome no topo representa somente a pessoa autenticada, nunca o técnico do chat.
+      if (topNameEl) {
+        topNameEl.textContent = !currentUserLoggedIn
+          ? 'Visitante'
+          : (currentUserRole === 'professional' ? 'Carlos Silva (Técnico)' : (residentName || 'Morador'));
+      }
+      // O cabeçalho do chat identifica o profissional com quem se está conversando.
+      if (nameEl && currentSelectedPro) {
+        nameEl.textContent = `${currentSelectedPro.name} (${currentSelectedPro.specialty})`;
+      }
+      if (statusEl) statusEl.textContent = 'Canal interno de conversa';
+    }
+
+    function handleSendChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatMessageInput');
+      const messageText = input.value.trim();
+      if (!messageText) return;
+
+      const container = document.getElementById('chatMessagesContainer');
+      document.getElementById('chatEmptyState')?.remove();
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'flex justify-end';
+      msgDiv.innerHTML = `
+        <div class="max-w-[80%] bg-brand-main text-white p-3 rounded-2xl rounded-tr-none text-xs space-y-1 shadow-sm">
+          <p>${escapeHTML(messageText)}</p>
+          <span class="text-[9px] text-emerald-200 block text-right">${timeStr}</span>
+        </div>`;
+      container.appendChild(msgDiv);
+      input.value = '';
+      container.scrollTop = container.scrollHeight;
+      // Não há resposta automática: as mensagens digitadas ficam visíveis no histórico.
+    }
+
+    function updateHireModal() {
+      const nameEl = document.getElementById('hireDescription');
+      const serviceEl = document.getElementById('hireServiceName');
+      const priceEl = document.getElementById('hireServicePrice');
+
+      if (nameEl) {
+        nameEl.innerHTML = `O valor negociado via chat com <strong>${escapeHTML(currentSelectedPro.name)}</strong> será enviado para a tela de pagamento em custódia segura.`;
+      }
+      if (serviceEl) {
+        serviceEl.textContent = `Reparo de ${currentSelectedPro.specialty} Residencial`;
+      }
+      if (priceEl) {
+        priceEl.textContent = 'R$ 100,00 (Total)';
+      }
+    }
+
+    function openHireModal() {
+      updateHireModal();
+      document.getElementById('modalHire').classList.remove('hidden');
+    }
+
+    function goToPaymentFromModal() {
+      closeModal('modalHire');
+      updatePaymentView();
+      navigateTo('view-payment');
+    }
+
+    function updatePaymentView() {
+      const gross = 100;
+      const fee = gross * 0.12;
+      const net = gross - fee;
+
+      const professionalLabel = document.getElementById('paymentProfessionalLabel');
+      const grossEl = document.getElementById('paymentGrossValue');
+      const feeEl = document.getElementById('paymentFeeValue');
+      const netEl = document.getElementById('paymentNetValue');
+      const confirmEl = document.getElementById('confirmPaymentText');
+
+      if (professionalLabel) professionalLabel.textContent = `Repasse líquido ao profissional (${currentSelectedPro.name})`;
+      if (grossEl) grossEl.textContent = `R$ ${gross.toFixed(2).replace('.', ',')}`;
+      if (feeEl) feeEl.textContent = `- R$ ${fee.toFixed(2).replace('.', ',')}`;
+      if (netEl) netEl.textContent = `R$ ${net.toFixed(2).replace('.', ',')}`;
+      if (confirmEl) confirmEl.textContent = `Confirmar Pagamento de R$ ${gross.toFixed(2).replace('.', ',')} em Custódia`;
+    }
+
+    function confirmOrderPayment() {
+      const gross = 100;
+      showToast(`Pagamento de R$ ${gross.toFixed(2).replace('.', ',')} retido em custódia com sucesso!`);
+      setTimeout(() => {
+        updateReviewView();
+        navigateTo('view-review');
+      }, 800);
+    }
+
+    function updateReviewView() {
+      const description = document.getElementById('reviewDescription');
+      if (description) {
+        description.innerHTML = `Pontue a execução do reparo realizado por <strong>${escapeHTML(currentSelectedPro.name)}</strong> nos 4 eixos objetivos.`;
+      }
+    }
+
+    function updateRangeDisplay(key, val) {
+      const span = document.getElementById(`scoreVal${key}`);
+      if (span) span.textContent = `${parseFloat(val).toFixed(1)} ★`;
+    }
+
+    function submitReviewAction() {
+      showToast('Avaliação publicada e integrada ao perfil do técnico!');
+      setTimeout(() => {
+        navigateTo('view-search');
+      }, 900);
+    }
+
+    // Modais e Denúncias
+    function openReportModal() {
+      document.getElementById('modalReport').classList.remove('hidden');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.add('hidden');
+    }
+
+    function submitReportAction() {
+      const category = document.getElementById('reportCategory')?.selectedOptions[0]?.textContent || 'irregularidade';
+      closeModal('modalReport');
+      showToast(`Denúncia sobre “${category}” enviada à moderação.`);
+    }
+
+    function handleModAction(action) {
+      showToast(`Ação registrada: ${action.toUpperCase()}`);
+    }
+
+    function showProPortfolioManager() {
+      showToast('Módulo do Técnico: Adicionar nova foto de obra realizada.');
+    }
+
+    // Autenticação
+    function switchAuthRole(role) {
+      currentUserRole = role;
+      const custBtn = document.getElementById('roleCustomerBtn');
+      const proBtn = document.getElementById('roleProBtn');
+      const loginInput = document.getElementById('authLoginInput');
+      const passwordInput = document.getElementById('authPasswordInput');
+      const nameField = document.getElementById('residentNameField');
+      if (nameField) nameField.classList.toggle('hidden', role !== 'customer');
+      // E-mail/senha fictícios para a demonstração; o nome do morador é editável.
+      if (loginInput) loginInput.value = role === 'professional' ? 'carlos.silva@reparosplus.demo' : 'ana.oliveira@reparosplus.demo';
+      if (passwordInput) passwordInput.value = 'reparos2026';
+      if (role === 'customer') {
+        custBtn.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-brand-main text-white transition shadow-sm';
+        proBtn.className = 'flex-1 py-2 text-xs font-semibold text-brand-muted hover:text-brand-main rounded-lg transition';
+      } else {
+        proBtn.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-brand-main text-white transition shadow-sm';
+        custBtn.className = 'flex-1 py-2 text-xs font-semibold text-brand-muted hover:text-brand-main rounded-lg transition';
+      }
+      updateChatHeader();
+    }
+
+    function handleAuthSubmit(e) {
+      e.preventDefault();
+      const userBadge = document.getElementById('userBadge');
+      const userNameDisplay = document.getElementById('userNameDisplay');
+      const authBtn = document.getElementById('authBtn');
+      const typedResidentName = (document.getElementById('authResidentName')?.value || '').trim();
+      if (currentUserRole === 'customer' && !typedResidentName) {
+        document.getElementById('authResidentName')?.focus();
+        showToast('Digite o nome do morador para continuar.');
+        return;
+      }
+      currentUserLoggedIn = true;
+      userBadge.classList.remove('hidden');
+      userBadge.classList.add('flex');
+      userNameDisplay.textContent = currentUserRole === 'professional' ? 'Carlos Silva (Técnico)' : typedResidentName;
+      authBtn.innerHTML = '<i class="fa-solid fa-arrow-right-from-bracket"></i> Sair';
+      authBtn.onclick = handleLogout;
+      updateChatHeader();
+      showToast(`Bem-vindo ao Reparos+! Acesso liberado.`);
+      navigateTo(currentUserRole === 'professional' ? 'view-pro-dashboard' : 'view-search');
+    }
+
+    function handleLogout() {
+      const userBadge = document.getElementById('userBadge');
+      const userNameDisplay = document.getElementById('userNameDisplay');
+      const authBtn = document.getElementById('authBtn');
+      currentUserLoggedIn = false;
+      currentUserRole = 'customer';
+      userBadge.classList.add('hidden');
+      userBadge.classList.remove('flex');
+      userNameDisplay.textContent = 'Visitante';
+      authBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket mr-1.5"></i>Entrar';
+      authBtn.onclick = () => navigateTo('view-auth');
+      updateChatHeader();
+      showToast('Sessão encerrada com segurança.');
+      navigateTo('view-auth');
+    }
+
+    function toggleRegisterModal() {
+      showToast('Cadastro simplificado: Insira CPF, e-mail e selecione sua categoria.');
+    }
+
+    // Helper: Notificação Toast
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      const msgEl = document.getElementById('toastMessage');
+      msgEl.textContent = msg;
+
+      toast.classList.remove('opacity-0', 'translate-y-20', 'pointer-events-none');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-20', 'pointer-events-none');
+      }, 3200);
+    }
+
+    // Sanitização de texto
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>
