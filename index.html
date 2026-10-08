@@ -20,16 +20,18 @@
           colors: {
             brand: {
               main: '#12355B',
-              secondary: '#12355B',
-              light: '#E8F1F8',
+              secondary: '#F28C28',
+              light: '#FFF3E6',
               bg: '#F7F9FC',
               text: '#1F2933',
               muted: '#667085',
               border: '#D9E2EC',
-              chat: '#2B7AAB',
+              chat: '#256D85',
               alert: '#D64545',
-              gold: '#FFC857',
-              action: '#F28C28'
+              mainDark: '#0D2945',
+              chatDark: '#1E566A',
+              chatLight: '#E7F1F4',
+              gold: '#FFC857'
             }
           },
           fontFamily: {
@@ -81,6 +83,21 @@
       animation: subtle-pulse 3s infinite;
     }
   
+
+    .bg-brand-mainDark { background-color: #0D2945 !important; }
+    .bg-brand-chatDark { background-color: #1E566A !important; }
+    .bg-brand-chatLight { background-color: #E7F1F4 !important; }
+    .border-brand-chatLight { border-color: #E7F1F4 !important; }
+    .text-brand-chat { color: #256D85 !important; }
+    .bg-brand-chat { background-color: #256D85 !important; }
+    .bg-brand-actionDark { background-color: #D97616 !important; }
+    .bg-brand-chat\/20 { background-color: rgba(37,109,133,.20) !important; }
+    .bg-brand-light { background-color: #FFF3E6 !important; }
+    .text-brand-secondary { color: #F28C28 !important; }
+    .bg-brand-secondary { background-color: #F28C28 !important; }
+    .text-brand-gold { color: #FFC857 !important; }
+    .bg-brand-gold { background-color: #FFC857 !important; }
+
   /* Reparos+ — hierarquia visual: azul para identidade, laranja para ações */
   .brand-action {
     background-color: #F28C28;
@@ -89,22 +106,6 @@
   .brand-action:hover {
     background-color: #D97616;
   }
-
-    .brand-action {
-      background-color: #F28C28 !important;
-      color: #FFFFFF !important;
-    }
-    .brand-action:hover {
-      background-color: #D97616 !important;
-    }
-    .cta-action {
-      background: #F28C28;
-      color: #fff;
-    }
-    .cta-action:hover {
-      background: #D97616;
-    }
-
 </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-brand-light selection:text-brand-main">
@@ -120,7 +121,6 @@
         <div>
           <div class="flex items-center gap-1.5">
             <span class="text-xl font-extrabold text-brand-main tracking-tight">Reparos<span class="text-brand-secondary">+</span></span>
-            <span class="hidden sm:inline-block text-[10px] bg-brand-light text-brand-main font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">MVP 2026</span>
           </div>
           <p class="text-[11px] text-brand-muted font-medium hidden sm:block">Encontre profissionais com segurança</p>
         </div>
@@ -137,7 +137,7 @@
         <button onclick="openProfessionalProfile('carlos')" class="px-3 py-2 rounded-lg hover:text-brand-main hover:bg-brand-light/50 transition">
           <i class="fa-solid fa-id-card mr-1.5 text-xs"></i>Perfil
         </button>
-        <button onclick="navigateTo('view-chat')" class="px-3 py-2 rounded-lg hover:text-brand-chat hover:bg-blue-50 transition relative">
+        <button onclick="navigateTo('view-chat')" class="px-3 py-2 rounded-lg hover:text-brand-chat hover:bg-brand-chatLight transition relative">
           <i class="fa-solid fa-comment-dots mr-1.5 text-xs text-brand-chat"></i>Chat
           <span class="inline-block w-2 h-2 rounded-full bg-brand-chat ml-1"></span>
         </button>
@@ -151,9 +151,9 @@
 
       <!-- Status do Usuário / Botão de Acesso -->
       <div class="flex items-center gap-2.5">
-        <div id="userBadge" class="hidden items-center gap-2 bg-brand-light px-2.5 py-1.5 rounded-xl text-xs font-semibold text-brand-main">
+        <div id="userBadge" class="flex items-center gap-2 bg-brand-light px-2.5 py-1.5 rounded-xl text-xs font-semibold text-brand-main">
           <i class="fa-solid fa-user-check"></i>
-          <span id="userNameDisplay">Morador</span>
+          <span id="userNameDisplay">Carlos Silva (Técnico)</span>
         </div>
         <button id="authBtn" onclick="navigateTo('view-auth')" class="text-xs font-bold px-3.5 py-2 rounded-xl bg-brand-main text-white hover:bg-opacity-95 shadow-sm transition">
           <i class="fa-solid fa-right-to-bracket mr-1.5"></i>Entrar
@@ -163,45 +163,7 @@
     </div>
   </header>
 
-  <!-- Indicador do Fluxo Geral (Passo a Passo Interativo) -->
-  <section class="bg-white border-b border-brand-border/80 px-4 py-2.5 overflow-x-auto custom-scrollbar">
-    <div class="max-w-5xl mx-auto flex items-center justify-between min-w-[620px] text-xs">
-      <button onclick="navigateTo('view-auth')" class="flow-step flex items-center gap-2 text-brand-muted hover:text-brand-main transition" data-step="1">
-        <span class="w-6 h-6 rounded-full bg-brand-light text-brand-main font-bold flex items-center justify-center">1</span>
-        <span>Entrar</span>
-      </button>
-      <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
-      
-      <button onclick="navigateTo('view-search')" class="flow-step flex items-center gap-2 text-brand-main font-bold transition" data-step="2">
-        <span class="w-6 h-6 rounded-full bg-brand-main text-white font-bold flex items-center justify-center">2</span>
-        <span>Buscar</span>
-      </button>
-      <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
-      
-      <button onclick="navigateTo('view-compare')" class="flow-step flex items-center gap-2 text-brand-muted hover:text-brand-main transition" data-step="3">
-        <span class="w-6 h-6 rounded-full bg-brand-light text-brand-main font-bold flex items-center justify-center">3</span>
-        <span>Comparar</span>
-      </button>
-      <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
-      
-      <button onclick="openProfessionalProfile('carlos')" class="flow-step flex items-center gap-2 text-brand-muted hover:text-brand-main transition" data-step="4">
-        <span class="w-6 h-6 rounded-full bg-brand-light text-brand-main font-bold flex items-center justify-center">4</span>
-        <span>Ver Perfil</span>
-      </button>
-      <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
-      
-      <button onclick="navigateTo('view-chat')" class="flow-step flex items-center gap-2 text-brand-muted hover:text-brand-chat transition" data-step="5">
-        <span class="w-6 h-6 rounded-full bg-blue-100 text-brand-chat font-bold flex items-center justify-center">5</span>
-        <span>Chat Mensagem</span>
-      </button>
-      <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
-      
-      <button onclick="navigateTo('view-review')" class="flow-step flex items-center gap-2 text-brand-muted hover:text-brand-gold transition" data-step="6">
-        <span class="w-6 h-6 rounded-full bg-amber-100 text-brand-gold font-bold flex items-center justify-center">6</span>
-        <span>Avaliar</span>
-      </button>
-    </div>
-  </section>
+
 
   <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 pb-24 md:pb-12">
 
@@ -255,7 +217,7 @@
             <a href="#" class="text-brand-main font-semibold hover:underline">Esqueceu a senha?</a>
           </div>
 
-          <button type="submit" class="w-full py-3 rounded-xl bg-brand-main hover:bg-sky-800 text-white font-bold text-xs shadow-md shadow-brand-main/20 flex items-center justify-center gap-2 transition active:scale-[0.99]">
+          <button type="submit" class="w-full py-3 rounded-xl bg-brand-secondary hover:bg-brand-actionDark text-white font-bold text-xs shadow-md shadow-brand-secondary/20 flex items-center justify-center gap-2 transition active:scale-[0.99]">
             <span>Entrar no Sistema</span>
             <i class="fa-solid fa-arrow-right"></i>
           </button>
@@ -284,7 +246,7 @@
     <div id="view-search" class="view-screen active space-y-6">
       
       <!-- Banner de Boas-Vindas & Busca -->
-      <div class="bg-gradient-to-br from-brand-main via-brand-main to-brand-secondary rounded-3xl p-6 sm:p-8 text-white shadow-sm relative overflow-hidden">
+      <div class="bg-gradient-to-br from-brand-main via-sky-800 to-brand-secondary rounded-3xl p-6 sm:p-8 text-white shadow-sm relative overflow-hidden">
         <div class="relative z-10 max-w-2xl">
           <span class="inline-block bg-white/20 text-white text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full tracking-wider mb-2.5 backdrop-blur-sm">
             Busca Local Inteligente
@@ -292,7 +254,7 @@
           <h1 class="text-2xl sm:text-3xl font-extrabold leading-tight tracking-tight mb-2">
             Buscar Profissional Qualificado
           </h1>
-          <p class="text-xs sm:text-sm text-sky-100 font-normal leading-relaxed mb-6">
+          <p class="text-xs sm:text-sm text-white/80 font-normal leading-relaxed mb-6">
             Cruze o <strong>bairro de atendimento</strong> com a <strong>especialidade técnica</strong>. Veja certificados válidos e fotos de serviços reais antes de contratar.
           </p>
 
@@ -322,7 +284,7 @@
             </div>
 
             <div class="sm:col-span-2 flex items-end">
-              <button onclick="executeSearch()" id="btnSearch" class="w-full py-2.5 px-3 rounded-xl bg-brand-main hover:bg-sky-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition shadow-sm active:scale-95">
+              <button onclick="executeSearch()" id="btnSearch" class="w-full py-2.5 px-3 rounded-xl bg-brand-secondary hover:bg-brand-actionDark text-white font-bold text-xs flex items-center justify-center gap-1.5 transition shadow-sm active:scale-95">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <span class="sm:hidden">Buscar</span>
               </button>
@@ -332,7 +294,7 @@
 
           <!-- Filtros Rápidos (Chips) -->
           <div class="flex flex-wrap items-center gap-2 mt-4 text-xs font-medium">
-            <span class="text-[11px] text-sky-100">Filtros rápidos:</span>
+            <span class="text-[11px] text-white/80">Filtros rápidos:</span>
             <button onclick="quickFilter('Marco', 'Eletricista')" class="px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 text-white text-[11px] transition">Eletricistas no Marco</button>
             <button onclick="quickFilter('Nazaré', 'Encanador')" class="px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 text-white text-[11px] transition">Encanadores em Nazaré</button>
             <button onclick="quickFilter('Umarizal', 'Montador de Móveis')" class="px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 text-white text-[11px] transition">Montadores no Umarizal</button>
@@ -351,7 +313,7 @@
           <p class="text-xs text-brand-muted">Profissionais verificados com portfólio disponível para atendimento domiciliar.</p>
         </div>
         <div class="flex items-center gap-2 text-xs font-semibold text-brand-muted">
-          <span class="flex items-center gap-1 text-emerald-700 bg-sky-50 px-2 py-1 rounded-lg border border-emerald-200">
+          <span class="flex items-center gap-1 text-emerald-700 bg-brand-chatLight px-2 py-1 rounded-lg border border-emerald-200">
             <i class="fa-solid fa-bolt text-[10px]"></i>
             <span id="responseTimeDisplay">Tempo: 0.18s (Máx 2s)</span>
           </span>
@@ -414,7 +376,7 @@
             <div>
               <div class="flex items-center gap-2">
                 <h2 id="profileName" class="text-xl font-extrabold text-brand-text">Carlos Silva</h2>
-                <span class="verified-badge text-[10px] bg-sky-100 text-brand-main border border-brand-secondary font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span class="verified-badge text-[10px] bg-brand-chatLight text-brand-main border border-brand-secondary font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
                   <i class="fa-solid fa-circle-check"></i> Verificado
                 </span>
               </div>
@@ -433,11 +395,11 @@
 
           <!-- Ações do Cabeçalho -->
           <div class="flex flex-wrap items-center gap-2">
-            <button onclick="openChatFromProfile()" class="px-4 py-2.5 rounded-xl bg-brand-chat text-white font-bold text-xs shadow-md shadow-brand-chat/20 flex items-center gap-2 hover:bg-sky-700 transition">
+            <button onclick="openChatFromProfile()" class="px-4 py-2.5 rounded-xl bg-brand-chat text-white font-bold text-xs shadow-md shadow-brand-chat/20 flex items-center gap-2 hover:bg-brand-chatDark transition">
               <i class="fa-solid fa-comment-dots"></i>
               <span>💬 Chat por mensagem</span>
             </button>
-            <button onclick="openHireModal()" class="px-4 py-2.5 rounded-xl bg-brand-main text-white font-bold text-xs shadow-md shadow-brand-main/20 flex items-center gap-2 hover:bg-sky-800 transition">
+            <button onclick="openHireModal()" class="px-4 py-2.5 rounded-xl bg-brand-secondary text-white font-bold text-xs shadow-md shadow-brand-secondary/20 flex items-center gap-2 hover:bg-brand-actionDark transition">
               <i class="fa-solid fa-handshake"></i>
               <span>Contratar Reparo</span>
             </button>
@@ -513,7 +475,7 @@
       <div class="bg-white rounded-3xl border border-brand-border shadow-sm overflow-hidden flex flex-col h-[560px]">
         
         <!-- Header do Chat (Identidade Azul) -->
-        <div class="bg-gradient-to-r from-brand-chat to-sky-700 text-white px-5 py-3.5 flex items-center justify-between">
+        <div class="bg-gradient-to-r from-brand-chat to-brand-chatDark text-white px-5 py-3.5 flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl bg-white/20 text-white font-bold flex items-center justify-center text-xs">
               CS
@@ -523,11 +485,11 @@
                 <h3 id="chatProfessionalName" class="font-bold text-xs sm:text-sm">Carlos Silva (Eletricista)</h3>
                 <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
               </div>
-              <p id="chatProfessionalStatus" class="text-[10px] text-sky-100">Canal interno auditável • Proteção de dados ativos</p>
+              <p id="chatProfessionalStatus" class="text-[10px] text-white/80">Canal interno auditável • Proteção de dados ativos</p>
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="openHireModal()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-sky-500 text-white font-bold text-xs transition flex items-center gap-1">
+            <button onclick="openHireModal()" class="px-3 py-1.5 rounded-lg bg-brand-secondary hover:bg-brand-actionDark text-white font-bold text-xs transition flex items-center gap-1">
               <i class="fa-solid fa-receipt text-[11px]"></i>
               <span>Contratar</span>
             </button>
@@ -535,7 +497,7 @@
         </div>
 
         <!-- Alerta de Segurança e Privacidade -->
-        <div class="bg-blue-50/80 px-4 py-2 border-b border-blue-100 flex items-center gap-2 text-[11px] text-brand-chat">
+        <div class="bg-brand-chatLight px-4 py-2 border-b border-brand-chatLight flex items-center gap-2 text-[11px] text-brand-chat">
           <i class="fa-solid fa-lock text-xs"></i>
           <span><strong>Negociação Protegida:</strong> Mantenha o alinhamento de escopo no Reparos+. Números externos e dados sensíveis são mascarados até o acordo formal.</span>
         </div>
@@ -565,19 +527,19 @@
 
           <!-- Proposta Formal Enviada pelo Técnico no Chat -->
           <div class="flex justify-start w-full">
-            <div class="max-w-[85%] bg-blue-50/90 border border-blue-200 text-brand-text p-3.5 rounded-2xl text-xs space-y-2 shadow-sm">
-              <div class="flex items-center justify-between border-b border-blue-200 pb-1.5">
+            <div class="max-w-[85%] bg-brand-chatLight border border-brand-chatLight text-brand-text p-3.5 rounded-2xl text-xs space-y-2 shadow-sm">
+              <div class="flex items-center justify-between border-b border-brand-chatLight pb-1.5">
                 <strong class="text-brand-chat font-bold flex items-center gap-1.5">
                   <i class="fa-solid fa-file-signature"></i> Proposta de Orçamento Formal
                 </strong>
-                <span class="text-[10px] bg-blue-200/80 text-blue-900 font-bold px-2 py-0.5 rounded">R$ 100,00</span>
+                <span class="text-[10px] bg-brand-chat/20 text-brand-chat font-bold px-2 py-0.5 rounded">R$ 100,00</span>
               </div>
               <p class="text-[11px] text-slate-600 leading-relaxed">
                 <strong>Escopo:</strong> Troca do disjuntor bipolar, aperto de barramento de neutro e teste de carga em regime contínuo. Garantia de 90 dias na execução.
               </p>
               <div class="flex items-center justify-between pt-1">
                 <span class="text-[10px] text-brand-muted">Custódia assegurada pelo app</span>
-                <button onclick="openHireModal()" class="px-3 py-1 rounded-lg bg-brand-main text-white font-bold text-[11px] hover:bg-sky-800 transition">
+                <button onclick="openHireModal()" class="px-3 py-1 rounded-lg bg-brand-secondary text-white font-bold text-[11px] hover:bg-brand-actionDark transition">
                   Aceitar e Pagar R$ 100,00
                 </button>
               </div>
@@ -588,8 +550,8 @@
 
         <!-- Barra de Input de Mensagem -->
         <form onsubmit="handleSendChatMessage(event)" class="p-3 bg-white border-t border-brand-border flex items-center gap-2">
-          <input type="text" id="chatMessageInput" placeholder="Digite sua mensagem para alinhar o reparo..." class="flex-1 px-3.5 py-2.5 bg-brand-bg border border-brand-border rounded-xl text-xs focus:outline-none focus:border-brand-chat text-brand-text">
-          <button type="submit" class="w-10 h-10 rounded-xl bg-brand-chat hover:bg-sky-700 text-white flex items-center justify-center transition shadow-sm">
+          <input type="text" id="chatMessageInput" placeholder="Digite sua mensagem..." class="flex-1 px-3.5 py-2.5 bg-white border border-brand-border rounded-xl text-xs focus:outline-none focus:border-brand-chat text-brand-text" autocomplete="off">
+          <button type="submit" aria-label="Enviar mensagem" class="w-10 h-10 rounded-xl bg-brand-chat hover:bg-brand-chatDark text-white flex items-center justify-center transition shadow-sm">
             <i class="fa-solid fa-paper-plane text-xs"></i>
           </button>
         </form>
@@ -650,7 +612,7 @@
           </div>
         </div>
 
-        <div class="p-3 bg-sky-50 rounded-xl text-[11px] text-brand-main font-medium border border-emerald-200">
+        <div class="p-3 bg-brand-chatLight rounded-xl text-[11px] text-brand-main font-medium border border-emerald-200">
           <i class="fa-solid fa-shield-halved mr-1"></i>
           <strong>Garantia de Custódia:</strong> O valor permanece guardado na plataforma. O repasse de R$ 88,00 só é debitado após o contratante confirmar a conclusão da obra.
         </div>
@@ -688,7 +650,7 @@
 
         </div>
 
-        <button onclick="confirmOrderPayment()" class="w-full py-3.5 rounded-2xl bg-brand-main hover:bg-sky-800 text-white font-extrabold text-xs shadow-md shadow-brand-main/20 flex items-center justify-center gap-2 transition active:scale-[0.99]">
+        <button onclick="confirmOrderPayment()" class="w-full py-3.5 rounded-2xl bg-brand-secondary hover:bg-brand-actionDark text-white font-extrabold text-xs shadow-md shadow-brand-secondary/20 flex items-center justify-center gap-2 transition active:scale-[0.99]">
           <i class="fa-solid fa-lock"></i>
           <span id="confirmPaymentText">Confirmar Pagamento de R$ 100,00 em Custódia</span>
         </button>
@@ -752,7 +714,7 @@
             <textarea placeholder="Descreva brevemente como foi o serviço..." rows="3" class="w-full p-3 bg-brand-bg border border-brand-border rounded-xl text-xs text-brand-text focus:outline-none focus:border-brand-main"></textarea>
           </div>
 
-          <button onclick="submitReviewAction()" class="w-full py-3 rounded-xl bg-brand-main hover:bg-sky-800 text-white font-bold text-xs shadow-md shadow-brand-main/20 transition active:scale-95">
+          <button onclick="submitReviewAction()" class="w-full py-3 rounded-xl bg-brand-secondary hover:bg-brand-actionDark text-white font-bold text-xs shadow-md shadow-brand-secondary/20 transition active:scale-95">
             Publicar Avaliação por Critérios
           </button>
 
@@ -772,7 +734,7 @@
           <h2 class="text-xl font-extrabold text-brand-text mt-1">Painel do Profissional</h2>
           <p class="text-xs text-brand-muted">Gerencie portfólio, documentações validadas e construa reputação técnica sustentável.</p>
         </div>
-        <button onclick="showProPortfolioManager()" class="px-3.5 py-2 rounded-xl bg-brand-main text-white font-bold text-xs hover:bg-sky-800 transition flex items-center gap-1.5 shadow-sm">
+        <button onclick="showProPortfolioManager()" class="px-3.5 py-2 rounded-xl bg-brand-secondary text-white font-bold text-xs hover:bg-brand-actionDark transition flex items-center gap-1.5 shadow-sm">
           <i class="fa-solid fa-plus"></i> Adicionar Foto de Obra
         </button>
       </div>
@@ -798,7 +760,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         
         <div class="bg-white p-4 rounded-2xl border border-brand-border shadow-sm flex items-center gap-3">
-          <div class="w-12 h-12 rounded-xl bg-sky-50 text-brand-main flex items-center justify-center font-extrabold text-xl">
+          <div class="w-12 h-12 rounded-xl bg-brand-chatLight text-brand-main flex items-center justify-center font-extrabold text-xl">
             6
           </div>
           <div>
@@ -808,7 +770,7 @@
         </div>
 
         <div class="bg-white p-4 rounded-2xl border border-brand-border shadow-sm flex items-center gap-3">
-          <div class="w-12 h-12 rounded-xl bg-blue-50 text-brand-chat flex items-center justify-center font-extrabold text-xl">
+          <div class="w-12 h-12 rounded-xl bg-brand-chatLight text-brand-chat flex items-center justify-center font-extrabold text-xl">
             3
           </div>
           <div>
@@ -833,19 +795,19 @@
       <div class="bg-white rounded-3xl p-5 border border-brand-border shadow-sm space-y-3">
         <div class="flex items-center justify-between">
           <h3 class="text-xs font-extrabold text-brand-text uppercase tracking-wider">Chamados Recebidos Recentemente</h3>
-          <span class="text-[10px] bg-sky-100 text-brand-main font-bold px-2 py-0.5 rounded-full">1 pendente</span>
+          <span class="text-[10px] bg-brand-chatLight text-brand-main font-bold px-2 py-0.5 rounded-full">1 pendente</span>
         </div>
 
         <div class="p-3.5 rounded-2xl bg-brand-bg border border-brand-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div>
             <div class="flex items-center gap-2">
               <strong class="text-brand-text">Quadro com aquecimento no chuveiro</strong>
-              <span class="text-[10px] bg-sky-100 text-brand-chat px-2 py-0.5 rounded font-bold">Bairro Marco</span>
+              <span class="text-[10px] bg-brand-chatLight text-brand-chat px-2 py-0.5 rounded font-bold">Bairro Marco</span>
             </div>
             <p class="text-[11px] text-brand-muted mt-0.5">Cliente: Morador Residencial • Enviado via Chat Interno</p>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="navigateTo('view-chat')" class="px-3 py-1.5 rounded-xl bg-brand-chat text-white font-bold text-xs hover:bg-sky-700 transition">
+            <button onclick="navigateTo('view-chat')" class="px-3 py-1.5 rounded-xl bg-brand-chat text-white font-bold text-xs hover:bg-brand-chatDark transition">
               Responder no Chat
             </button>
           </div>
@@ -895,8 +857,8 @@
                   <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">Em Análise</span>
                 </td>
                 <td class="py-3 text-right space-x-1">
-                  <button onclick="handleModAction('validar')" class="px-2 py-1 rounded bg-sky-100 text-sky-800 font-bold hover:bg-emerald-200">Validar</button>
-                  <button onclick="handleModAction('corrigir')" class="px-2 py-1 rounded bg-blue-100 text-blue-800 font-bold hover:bg-blue-200">Pedir Correção</button>
+                  <button onclick="handleModAction('validar')" class="px-2 py-1 rounded bg-brand-chatLight text-brand-chat font-bold hover:bg-emerald-200">Validar</button>
+                  <button onclick="handleModAction('corrigir')" class="px-2 py-1 rounded bg-brand-chatLight text-brand-chat font-bold hover:bg-blue-200">Pedir Correção</button>
                   <button onclick="handleModAction('bloquear')" class="px-2 py-1 rounded bg-red-100 text-red-800 font-bold hover:bg-red-200">Bloquear</button>
                 </td>
               </tr>
@@ -908,10 +870,10 @@
                 <td class="py-3">Técnico Autônomo #119</td>
                 <td class="py-3 text-brand-muted">Tentativa de cobrança de taxa de visita não discriminada no chat.</td>
                 <td class="py-3">
-                  <span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[10px] font-bold">Auditando Chat</span>
+                  <span class="px-2 py-0.5 rounded-full bg-brand-chatLight text-brand-chat text-[10px] font-bold">Auditando Chat</span>
                 </td>
                 <td class="py-3 text-right space-x-1">
-                  <button onclick="handleModAction('validar')" class="px-2 py-1 rounded bg-sky-100 text-sky-800 font-bold hover:bg-emerald-200">Validar</button>
+                  <button onclick="handleModAction('validar')" class="px-2 py-1 rounded bg-brand-chatLight text-brand-chat font-bold hover:bg-emerald-200">Validar</button>
                   <button onclick="handleModAction('bloquear')" class="px-2 py-1 rounded bg-red-100 text-red-800 font-bold hover:bg-red-200">Bloquear</button>
                 </td>
               </tr>
@@ -955,7 +917,7 @@
         </div>
 
         <div class="bg-white p-5 rounded-2xl border border-brand-border shadow-sm space-y-2">
-          <div class="w-8 h-8 rounded-xl bg-blue-100 text-brand-chat font-bold flex items-center justify-center text-xs">4</div>
+          <div class="w-8 h-8 rounded-xl bg-brand-chatLight text-brand-chat font-bold flex items-center justify-center text-xs">4</div>
           <h3 class="text-sm font-bold text-brand-text">4. Chat Interno Auditável</h3>
           <p class="text-xs text-brand-muted">Alinhamento de escopo e formalização de orçamentos diretamente na plataforma.</p>
         </div>
@@ -1000,7 +962,7 @@
 
       <div class="flex gap-2 pt-2">
         <button onclick="closeModal('modalHire')" class="flex-1 py-2.5 rounded-xl border border-brand-border text-xs font-bold text-brand-muted hover:bg-slate-50">Cancelar</button>
-        <button onclick="goToPaymentFromModal()" class="flex-1 py-2.5 rounded-xl bg-brand-main text-white text-xs font-bold hover:bg-sky-800">Avançar para Pagamento</button>
+        <button onclick="goToPaymentFromModal()" class="flex-1 py-2.5 rounded-xl bg-brand-secondary text-white text-xs font-bold hover:bg-brand-actionDark">Avançar para Pagamento</button>
       </div>
     </div>
   </div>
@@ -1112,7 +1074,7 @@
         portfolio: [
           { title: 'Quadro de Disjuntores', category: 'Quadro', color: '#12355B', desc: 'Revisão e substituição de barramento' },
           { title: 'Fiação Reforçada 6mm', category: 'Fiação', color: '#0369a1', desc: 'Troca de fiação para chuveiro elétrico' },
-          { title: 'Tomadas e Interruptores', category: 'Tomadas', color: '#b45309', desc: 'Instalação de circuito independente 20A' }
+          { title: 'Tomadas e Interruptores', category: 'Tomadas', color: '#FFC857', desc: 'Instalação de circuito independente 20A' }
         ]
       },
       {
@@ -1139,7 +1101,7 @@
         portfolio: [
           { title: 'Instalação Luminárias LED', category: 'Iluminação', color: '#12355B', desc: 'Pontos em gesso e fitas de led' },
           { title: 'Troca de Chave Geral', category: 'Quadro', color: '#0369a1', desc: 'Adequação de DPS e aterramento' },
-          { title: 'Rede Elétrica Sala', category: 'Fiação', color: '#b45309', desc: 'Circuitos dedicados para climatizador' }
+          { title: 'Rede Elétrica Sala', category: 'Fiação', color: '#FFC857', desc: 'Circuitos dedicados para climatizador' }
         ]
       },
       {
@@ -1174,7 +1136,6 @@
 
     // Inicialização da aplicação
     document.addEventListener('DOMContentLoaded', () => {
-      restoreDemoSession();
       executeSearch();
       renderComparisonView();
       updateChatHeader();
@@ -1182,28 +1143,6 @@
       updatePaymentView();
       updateReviewView();
     });
-
-
-    // Persistência local do MVP: mantém apenas a sessão de demonstração no navegador.
-    function restoreDemoSession() {
-      try {
-        const saved = JSON.parse(localStorage.getItem('reparos_session') || 'null');
-        if (!saved) return;
-        currentUserRole = saved.role || 'customer';
-        const userBadge = document.getElementById('userBadge');
-        const userNameDisplay = document.getElementById('userNameDisplay');
-        const authBtn = document.getElementById('authBtn');
-        if (!userBadge || !userNameDisplay || !authBtn) return;
-
-        userBadge.classList.remove('hidden');
-        userBadge.classList.add('flex');
-        userNameDisplay.textContent = saved.name || 'Morador Autenticado';
-        authBtn.innerHTML = '<i class="fa-solid fa-arrow-right-from-bracket"></i> Sair';
-        authBtn.onclick = handleLogout;
-      } catch (err) {
-        console.warn('Sessão local do MVP indisponível.', err);
-      }
-    }
 
     // Navegação entre telas do SPA
     function navigateTo(viewId) {
@@ -1311,7 +1250,7 @@
                   <div>
                     <div class="flex items-center gap-1.5">
                       <h3 class="font-extrabold text-sm text-brand-text">${pro.name}</h3>
-                      <span class="text-[9px] bg-sky-100 text-brand-main font-bold px-1.5 py-0.2 rounded">✓ Verificado</span>
+                      <span class="text-[9px] bg-brand-chatLight text-brand-main font-bold px-1.5 py-0.2 rounded">✓ Verificado</span>
                     </div>
                     <p class="text-xs text-brand-muted font-medium">${pro.specialty} • ${pro.region}</p>
                   </div>
@@ -1336,17 +1275,17 @@
               <div class="mb-3">
                 <span class="text-[10px] font-bold text-brand-muted block mb-1">Certificados comprovados:</span>
                 <div class="flex flex-wrap gap-1">
-                  ${pro.certs.map(c => `<span class="text-[10px] bg-sky-50 text-brand-main px-2 py-0.5 rounded-md font-medium border border-sky-100">${c.name}</span>`).join('')}
+                  ${pro.certs.map(c => `<span class="text-[10px] bg-brand-chatLight text-brand-main px-2 py-0.5 rounded-md font-medium border border-brand-chatLight">${c.name}</span>`).join('')}
                 </div>
               </div>
             </div>
 
             <!-- Botões de Ação do Card -->
             <div class="pt-3 border-t border-brand-border flex items-center justify-between gap-2">
-              <button onclick="openProfessionalProfile('${pro.id}')" class="flex-1 py-2 rounded-xl bg-brand-light hover:bg-sky-100 text-brand-main text-xs font-bold transition flex items-center justify-center gap-1">
+              <button onclick="openProfessionalProfile('${pro.id}')" class="flex-1 py-2 rounded-xl bg-brand-light hover:bg-brand-chatLight text-brand-main text-xs font-bold transition flex items-center justify-center gap-1">
                 <i class="fa-solid fa-eye text-[10px]"></i> Ver perfil
               </button>
-              <button onclick="startChatWith('${pro.id}')" class="flex-1 py-2 rounded-xl bg-brand-chat hover:bg-sky-700 text-white text-xs font-bold transition flex items-center justify-center gap-1 shadow-sm">
+              <button onclick="startChatWith('${pro.id}')" class="flex-1 py-2 rounded-xl bg-brand-chat hover:bg-brand-chatDark text-white text-xs font-bold transition flex items-center justify-center gap-1 shadow-sm">
                 <i class="fa-solid fa-comment-dots text-[10px]"></i> Chat Mensagem
               </button>
             </div>
@@ -1382,7 +1321,7 @@
             <strong class="text-brand-text block">${c.name}</strong>
             <span class="text-[10px] text-brand-muted">Emitido por ${c.institution}</span>
           </div>
-          <span class="text-[10px] text-sky-800 bg-sky-100 font-bold px-2 py-0.5 rounded-full">${c.status}</span>
+          <span class="text-[10px] text-brand-chat bg-brand-chatLight font-bold px-2 py-0.5 rounded-full">${c.status}</span>
         </div>
       `).join('');
 
@@ -1477,7 +1416,7 @@
             <div class="flex justify-between"><span>Fotos no Portfólio</span><strong>${pro.portfolio.length} obras</strong></div>
           </div>
 
-          <button onclick="openProfessionalProfile('${pro.id}')" class="w-full py-2.5 rounded-xl bg-brand-main text-white font-bold text-xs hover:bg-sky-800 transition">
+          <button onclick="openProfessionalProfile('${pro.id}')" class="w-full py-2.5 rounded-xl bg-brand-main text-white font-bold text-xs hover:bg-brand-mainDark transition">
             Ver Perfil Completo
           </button>
         </div>
@@ -1500,9 +1439,13 @@
     function updateChatHeader() {
       const nameEl = document.getElementById('chatProfessionalName');
       const statusEl = document.getElementById('chatProfessionalStatus');
+      const topNameEl = document.getElementById('userNameDisplay');
 
       if (nameEl) {
         nameEl.textContent = `${currentSelectedPro.name} (${currentSelectedPro.specialty})`;
+      }
+      if (topNameEl) {
+        topNameEl.textContent = `${currentSelectedPro.name} (Técnico)`;
       }
       if (statusEl) {
         statusEl.textContent = 'Canal interno auditável • Proteção de dados ativos';
@@ -1669,21 +1612,9 @@
 
       userBadge.classList.remove('hidden');
       userBadge.classList.add('flex');
-
-      const enteredLogin = document.getElementById('authLoginInput')?.value?.trim();
-      const displayName = currentUserRole === 'customer'
-        ? (enteredLogin && !enteredLogin.includes('@') ? 'Morador Autenticado' : 'Morador Autenticado')
-        : `${currentSelectedPro.name} (Técnico)`;
-
-      userNameDisplay.textContent = displayName;
+      userNameDisplay.textContent = `${currentSelectedPro.name} (Técnico)`;
       authBtn.innerHTML = '<i class="fa-solid fa-arrow-right-from-bracket"></i> Sair';
       authBtn.onclick = handleLogout;
-
-      localStorage.setItem('reparos_session', JSON.stringify({
-        role: currentUserRole,
-        name: displayName,
-        createdAt: new Date().toISOString()
-      }));
 
       showToast(`Bem-vindo ao Reparos+! Acesso liberado.`);
       
@@ -1697,11 +1628,11 @@
     function handleLogout() {
       const userBadge = document.getElementById('userBadge');
       const authBtn = document.getElementById('authBtn');
-      userBadge.classList.add('hidden');
-      userBadge.classList.remove('flex');
+      userBadge.classList.remove('hidden');
+      userBadge.classList.add('flex');
+      userNameDisplay.textContent = `${currentSelectedPro.name} (Técnico)`;
       authBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket mr-1.5"></i>Entrar';
       authBtn.onclick = () => navigateTo('view-auth');
-      localStorage.removeItem('reparos_session');
       showToast('Sessão encerrada com segurança.');
     }
 
