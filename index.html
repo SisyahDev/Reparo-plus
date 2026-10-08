@@ -151,7 +151,7 @@
 
       <!-- Status do Usuário / Botão de Acesso -->
       <div class="flex items-center gap-2.5">
-        <div id="userBadge" class="flex items-center gap-2 bg-brand-light px-2.5 py-1.5 rounded-xl text-xs font-semibold text-brand-main">
+        <div id="userBadge" class="hidden items-center gap-2 bg-brand-light px-2.5 py-1.5 rounded-xl text-xs font-semibold text-brand-main">
           <i class="fa-solid fa-user-check"></i>
           <span id="userNameDisplay">Carlos Silva (Técnico)</span>
         </div>
@@ -1133,6 +1133,7 @@
 
     let currentSelectedPro = professionalsData[0];
     let currentUserRole = 'customer'; // 'customer' ou 'professional'
+    let currentUserLoggedIn = false;
 
     // Inicialização da aplicação
     document.addEventListener('DOMContentLoaded', () => {
@@ -1444,8 +1445,10 @@
       if (nameEl) {
         nameEl.textContent = `${currentSelectedPro.name} (${currentSelectedPro.specialty})`;
       }
-      if (topNameEl) {
-        topNameEl.textContent = `${currentSelectedPro.name} (Técnico)`;
+      if (topNameEl && currentUserLoggedIn) {
+        topNameEl.textContent = currentUserRole === 'professional'
+          ? 'Carlos Silva (Técnico)'
+          : 'Ana Oliveira';
       }
       if (statusEl) {
         statusEl.textContent = 'Canal interno auditável • Proteção de dados ativos';
@@ -1594,6 +1597,11 @@
       currentUserRole = role;
       const custBtn = document.getElementById('roleCustomerBtn');
       const proBtn = document.getElementById('roleProBtn');
+      const loginInput = document.getElementById('authLoginInput');
+      const passwordInput = document.getElementById('authPasswordInput');
+      // Credenciais fictícias pré-preenchidas para facilitar a demonstração do MVP.
+      if (loginInput) loginInput.value = role === 'professional' ? 'carlos.silva@reparosplus.demo' : 'ana.oliveira@reparosplus.demo';
+      if (passwordInput) passwordInput.value = 'reparos2026';
 
       if (role === 'customer') {
         custBtn.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-brand-main text-white transition shadow-sm';
@@ -1610,14 +1618,18 @@
       const userNameDisplay = document.getElementById('userNameDisplay');
       const authBtn = document.getElementById('authBtn');
 
+      currentUserLoggedIn = true;
       userBadge.classList.remove('hidden');
       userBadge.classList.add('flex');
-      userNameDisplay.textContent = `${currentSelectedPro.name} (Técnico)`;
+      // Nome fixo de demonstração conforme o perfil escolhido no login.
+      userNameDisplay.textContent = currentUserRole === 'professional'
+        ? 'Carlos Silva (Técnico)'
+        : 'Ana Oliveira';
       authBtn.innerHTML = '<i class="fa-solid fa-arrow-right-from-bracket"></i> Sair';
       authBtn.onclick = handleLogout;
 
       showToast(`Bem-vindo ao Reparos+! Acesso liberado.`);
-      
+
       if (currentUserRole === 'professional') {
         navigateTo('view-pro-dashboard');
       } else {
@@ -1627,13 +1639,17 @@
 
     function handleLogout() {
       const userBadge = document.getElementById('userBadge');
+      const userNameDisplay = document.getElementById('userNameDisplay');
       const authBtn = document.getElementById('authBtn');
-      userBadge.classList.remove('hidden');
-      userBadge.classList.add('flex');
-      userNameDisplay.textContent = `${currentSelectedPro.name} (Técnico)`;
+      currentUserLoggedIn = false;
+      currentUserRole = 'customer';
+      userBadge.classList.add('hidden');
+      userBadge.classList.remove('flex');
+      userNameDisplay.textContent = 'Visitante';
       authBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket mr-1.5"></i>Entrar';
       authBtn.onclick = () => navigateTo('view-auth');
       showToast('Sessão encerrada com segurança.');
+      navigateTo('view-auth');
     }
 
     function toggleRegisterModal() {
