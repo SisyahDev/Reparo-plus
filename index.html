@@ -1135,8 +1135,12 @@
 
     // Inicialização da aplicação
     document.addEventListener('DOMContentLoaded', () => {
+      // Cada abertura completa do protótipo começa com uma conversa nova,
+      // evitando mensagens/orçamentos aceitos de testes anteriores.
+      try { localStorage.removeItem(CHAT_STORAGE_KEY); } catch (_) {}
       executeSearch();
       renderComparisonView();
+      renderChatMessages();
       updateChatHeader();
       updateHireModal();
       updatePaymentView();
