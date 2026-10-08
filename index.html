@@ -1521,7 +1521,7 @@
           const state = document.createElement('p'); state.className = 'text-[10px] font-bold';
           state.textContent = msg.quoteStatus === 'accepted' ? '✓ Orçamento aceito pelo morador' : msg.quoteStatus === 'declined' ? 'Orçamento recusado pelo morador' : msg.quoteStatus === 'negotiation_requested' ? '↔ Morador pediu negociação de valor' : msg.quoteStatus === 'superseded' ? 'Substituído por uma nova proposta' : 'Aguardando resposta do morador';
           bubble.appendChild(state);
-          if (currentUserRole === 'customer' && !msg.quoteStatus) {
+          if (currentUserRole === 'customer' && !['accepted', 'declined', 'superseded', 'negotiation_requested'].includes(msg.quoteStatus)) {
             const actions = document.createElement('div'); actions.className = 'flex flex-wrap gap-2 pt-1';
             const accept = document.createElement('button'); accept.type = 'button'; accept.className = 'px-3 py-2 rounded-lg bg-brand-secondary text-white font-bold'; accept.textContent = 'Contratar'; accept.onclick = () => acceptQuote(msg.id);
             const decline = document.createElement('button'); decline.type = 'button'; decline.className = 'px-3 py-2 rounded-lg border border-brand-border'; decline.textContent = 'Recusar'; decline.onclick = () => declineQuote(msg.id);
