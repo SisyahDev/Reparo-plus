@@ -493,9 +493,8 @@
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="openHireModal()" class="px-3 py-1.5 rounded-lg bg-brand-secondary hover:bg-brand-actionDark text-white font-bold text-xs transition flex items-center gap-1">
-              <i class="fa-solid fa-receipt text-[11px]"></i>
-              <span>Contratar</span>
+            <button id="makeQuoteBtn" onclick="toggleQuoteForm(true)" class="hidden px-3 py-1.5 rounded-lg bg-brand-secondary hover:bg-brand-actionDark text-white font-bold text-xs transition items-center gap-1">
+              <i class="fa-solid fa-file-invoice-dollar text-[11px]"></i><span>Fazer orçamento</span>
             </button>
           </div>
         </div>
@@ -512,6 +511,19 @@
             <i class="fa-regular fa-comments text-3xl text-brand-chat/60"></i>
             <p class="text-xs">Nenhuma mensagem ainda. Escreva abaixo para iniciar a conversa.</p>
           </div>
+        </div>
+
+        <!-- Formulário de orçamento: disponível apenas para o técnico -->
+        <div id="quoteFormPanel" class="hidden p-3 bg-orange-50 border-t border-orange-200">
+          <form onsubmit="handleSendQuote(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input id="quoteService" required placeholder="Serviço (ex.: conserto de torneira)" class="px-3 py-2 border border-brand-border rounded-lg text-xs text-brand-text">
+            <input id="quotePrice" required type="number" min="0.01" step="0.01" placeholder="Valor total (R$)" class="px-3 py-2 border border-brand-border rounded-lg text-xs text-brand-text">
+            <textarea id="quoteDetails" rows="2" placeholder="Materiais, prazo e detalhes do serviço" class="sm:col-span-2 px-3 py-2 border border-brand-border rounded-lg text-xs text-brand-text"></textarea>
+            <div class="sm:col-span-2 flex justify-end gap-2">
+              <button type="button" onclick="toggleQuoteForm(false)" class="px-3 py-2 rounded-lg border border-brand-border text-xs">Cancelar</button>
+              <button type="submit" class="px-3 py-2 rounded-lg bg-brand-secondary text-white font-bold text-xs">Enviar orçamento ao morador</button>
+            </div>
+          </form>
         </div>
 
         <!-- Barra de Input de Mensagem -->
@@ -1396,32 +1408,147 @@
       const pro = professionalsData.find(p => p.id === proId) || professionalsData[0];
       currentSelectedPro = pro;
       updateChatHeader();
+      renderChatMessages();
       updateHireModal();
       navigateTo('view-chat');
     }
 
     function openChatFromProfile() {
       updateChatHeader();
+      renderChatMessages();
       navigateTo('view-chat');
+    }
+
+    const CHAT_STORAGE_KEY = 'reparosPlusDemoConversationV1';
+
+    function getChatMessages() {
+      try { return JSON.parse(localStorage.getItem(CHAT_STORAGE_KEY) || '[]'); }
+      catch (_) { return []; }
+    }
+
+    function saveChatMessages(messages) {
+      try { localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages)); }
+      catch (_) { /* A conversa continua funcional durante a sessão mesmo sem armazenamento local. */ }
+    }
+
+    function getResidentName() {
+      return (document.getElementById('authResidentName')?.value || '').trim() || 'Ana Oliveira';
+    }
+
+    function getCurrentDisplayName() {
+      return currentUserRole === 'professional' ? 'Carlos Silva (Técnico)' : getResidentName();
     }
 
     function updateChatHeader() {
       const nameEl = document.getElementById('chatProfessionalName');
       const statusEl = document.getElementById('chatProfessionalStatus');
       const topNameEl = document.getElementById('userNameDisplay');
-      const residentName = (document.getElementById('authResidentName')?.value || '').trim();
+      if (topNameEl) topNameEl.textContent = currentUserLoggedIn ? getCurrentDisplayName() : 'Visitante';
 
-      // O nome no topo representa somente a pessoa autenticada, nunca o técnico do chat.
-      if (topNameEl) {
-        topNameEl.textContent = !currentUserLoggedIn
-          ? 'Visitante'
-          : (currentUserRole === 'professional' ? 'Carlos Silva (Técnico)' : (residentName || 'Morador'));
+      // A conversa é a mesma nos dois perfis; o nome do contato muda conforme quem entrou.
+      if (nameEl) {
+        nameEl.textContent = currentUserRole === 'professional'
+          ? getResidentName()
+          : `${currentSelectedPro.name} (${currentSelectedPro.specialty})`;
       }
-      // O cabeçalho do chat identifica o profissional com quem se está conversando.
-      if (nameEl && currentSelectedPro) {
-        nameEl.textContent = `${currentSelectedPro.name} (${currentSelectedPro.specialty})`;
+      if (statusEl) {
+        statusEl.textContent = currentUserRole === 'professional'
+          ? 'Conversa com morador • modo demonstração'
+          : 'Conversa com profissional • modo demonstração';
       }
-      if (statusEl) statusEl.textContent = 'Canal interno de conversa';
+      const quoteBtn = document.getElementById('makeQuoteBtn');
+      if (quoteBtn) quoteBtn.classList.toggle('hidden', !(currentUserLoggedIn && currentUserRole === 'professional'));
+      const quotePanel = document.getElementById('quoteFormPanel');
+      if (quotePanel && currentUserRole !== 'professional') quotePanel.classList.add('hidden');
+    }
+
+    function renderChatMessages() {
+      const container = document.getElementById('chatMessagesContainer');
+      if (!container) return;
+      const messages = getChatMessages();
+      container.innerHTML = '';
+      if (!messages.length) {
+        container.innerHTML = `<div id="chatEmptyState" class="h-full min-h-32 flex flex-col items-center justify-center text-center text-brand-muted gap-2"><i class="fa-regular fa-comments text-3xl text-brand-chat/60"></i><p class="text-xs">Nenhuma mensagem ainda. Escreva abaixo para iniciar a conversa.</p></div>`;
+        return;
+      }
+      messages.forEach(msg => {
+        const isMine = msg.role === currentUserRole;
+        const row = document.createElement('div');
+        row.className = isMine ? 'flex justify-end' : 'flex justify-start';
+        const bubble = document.createElement('div');
+        bubble.className = `max-w-[80%] p-3 rounded-2xl text-xs space-y-1 shadow-sm ${isMine ? 'bg-brand-main text-white rounded-tr-none' : 'bg-white border border-brand-border text-brand-text rounded-tl-none'}`;
+        const author = document.createElement('div');
+        author.className = `text-[10px] font-bold ${isMine ? 'text-white/80' : 'text-brand-chat'}`;
+        author.textContent = msg.author || (msg.role === 'professional' ? 'Carlos Silva (Técnico)' : getResidentName());
+        if (msg.type === 'quote') {
+          bubble.className = `max-w-[90%] p-3 rounded-2xl text-xs space-y-2 shadow-sm border ${isMine ? 'bg-orange-50 border-orange-300 text-brand-text' : 'bg-white border-orange-300 text-brand-text'}`;
+          const title = document.createElement('div');
+          title.className = 'font-extrabold text-sm text-brand-main';
+          title.textContent = 'Orçamento de serviço';
+          const service = document.createElement('p'); service.className = 'font-bold'; service.textContent = msg.service;
+          const price = document.createElement('p'); price.className = 'text-lg font-extrabold text-brand-secondary';
+          price.textContent = Number(msg.price).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+          bubble.append(title, service, price);
+          if (msg.details) { const details=document.createElement('p'); details.style.whiteSpace='pre-wrap'; details.textContent=msg.details; bubble.append(details); }
+          const state=document.createElement('p'); state.className='text-[10px] font-bold';
+          state.textContent = msg.quoteStatus === 'accepted' ? '✓ Orçamento aceito pelo morador' : msg.quoteStatus === 'declined' ? 'Orçamento recusado' : 'Aguardando resposta do morador';
+          bubble.append(state);
+          if (currentUserRole === 'customer' && !msg.quoteStatus) {
+            const actions=document.createElement('div'); actions.className='flex gap-2 pt-1';
+            const accept=document.createElement('button'); accept.type='button'; accept.className='px-3 py-2 rounded-lg bg-brand-secondary text-white font-bold'; accept.textContent='Contratar'; accept.onclick=()=>acceptQuote(msg.id);
+            const decline=document.createElement('button'); decline.type='button'; decline.className='px-3 py-2 rounded-lg border border-brand-border'; decline.textContent='Recusar'; decline.onclick=()=>declineQuote(msg.id);
+            actions.append(accept,decline); bubble.append(actions);
+          }
+        } else {
+          const body = document.createElement('p');
+          body.style.whiteSpace = 'pre-wrap';
+          body.textContent = msg.text;
+          bubble.append(body);
+        }
+        const time = document.createElement('span');
+        time.className = `text-[9px] block text-right ${isMine ? 'text-white/70' : 'text-brand-muted'}`;
+        time.textContent = msg.time || '';
+        bubble.append(author, body, time);
+        row.appendChild(bubble);
+        container.appendChild(row);
+      });
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function toggleQuoteForm(show) {
+      if (currentUserRole !== 'professional' || !currentUserLoggedIn) { showToast('Entre como técnico para criar um orçamento.'); return; }
+      document.getElementById('quoteFormPanel')?.classList.toggle('hidden', !show);
+      if (show) document.getElementById('quoteService')?.focus();
+    }
+
+    function handleSendQuote(e) {
+      e.preventDefault();
+      if (!currentUserLoggedIn || currentUserRole !== 'professional') return;
+      const service = document.getElementById('quoteService').value.trim();
+      const price = Number(document.getElementById('quotePrice').value);
+      const details = document.getElementById('quoteDetails').value.trim();
+      if (!service || !Number.isFinite(price) || price <= 0) { showToast('Informe o serviço e um valor válido.'); return; }
+      const now = new Date();
+      const messages = getChatMessages();
+      messages.push({id:`quote-${now.getTime()}`, type:'quote', role:'professional', author:getCurrentDisplayName(), service, price, details, quoteStatus:null, time:`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`, createdAt:now.toISOString()});
+      saveChatMessages(messages);
+      document.getElementById('quoteService').value=''; document.getElementById('quotePrice').value=''; document.getElementById('quoteDetails').value='';
+      toggleQuoteForm(false); renderChatMessages(); showToast('Orçamento enviado ao morador.');
+    }
+
+    function updateQuoteStatus(id, status) {
+      const messages=getChatMessages(); const quote=messages.find(m=>m.id===id && m.type==='quote');
+      if (!quote) return;
+      quote.quoteStatus=status; saveChatMessages(messages); renderChatMessages();
+    }
+    function acceptQuote(id) {
+      if (currentUserRole !== 'customer' || !currentUserLoggedIn) return;
+      updateQuoteStatus(id,'accepted');
+      showToast('Orçamento aceito! Contratação registrada na demonstração.');
+    }
+    function declineQuote(id) {
+      if (currentUserRole !== 'customer' || !currentUserLoggedIn) return;
+      updateQuoteStatus(id,'declined'); showToast('Orçamento recusado.');
     }
 
     function handleSendChatMessage(e) {
@@ -1429,22 +1556,24 @@
       const input = document.getElementById('chatMessageInput');
       const messageText = input.value.trim();
       if (!messageText) return;
-
-      const container = document.getElementById('chatMessagesContainer');
-      document.getElementById('chatEmptyState')?.remove();
+      if (!currentUserLoggedIn) {
+        showToast('Entre como morador ou técnico para enviar mensagens.');
+        navigateTo('view-auth');
+        return;
+      }
       const now = new Date();
       const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-      const msgDiv = document.createElement('div');
-      msgDiv.className = 'flex justify-end';
-      msgDiv.innerHTML = `
-        <div class="max-w-[80%] bg-brand-main text-white p-3 rounded-2xl rounded-tr-none text-xs space-y-1 shadow-sm">
-          <p>${escapeHTML(messageText)}</p>
-          <span class="text-[9px] text-emerald-200 block text-right">${timeStr}</span>
-        </div>`;
-      container.appendChild(msgDiv);
+      const messages = getChatMessages();
+      messages.push({
+        role: currentUserRole,
+        author: getCurrentDisplayName(),
+        text: messageText,
+        time: timeStr,
+        createdAt: now.toISOString()
+      });
+      saveChatMessages(messages);
       input.value = '';
-      container.scrollTop = container.scrollHeight;
-      // Não há resposta automática: as mensagens digitadas ficam visíveis no histórico.
+      renderChatMessages();
     }
 
     function updateHireModal() {
@@ -1583,6 +1712,7 @@
       authBtn.innerHTML = '<i class="fa-solid fa-arrow-right-from-bracket"></i> Sair';
       authBtn.onclick = handleLogout;
       updateChatHeader();
+      renderChatMessages();
       showToast(`Bem-vindo ao Reparos+! Acesso liberado.`);
       navigateTo(currentUserRole === 'professional' ? 'view-pro-dashboard' : 'view-search');
     }
@@ -1599,6 +1729,7 @@
       authBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket mr-1.5"></i>Entrar';
       authBtn.onclick = () => navigateTo('view-auth');
       updateChatHeader();
+      renderChatMessages();
       showToast('Sessão encerrada com segurança.');
       navigateTo('view-auth');
     }
