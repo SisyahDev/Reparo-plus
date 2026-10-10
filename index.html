@@ -128,23 +128,23 @@
 
       <!-- Navegação Desktop -->
       <nav class="hidden md:flex items-center gap-1 font-medium text-sm text-brand-muted" id="desktopNav">
-        <button onclick="navigateTo('view-flow')" class="px-3 py-2 rounded-lg hover:text-brand-main hover:bg-brand-light/50 transition">
-          <i class="fa-solid fa-route mr-1.5 text-xs"></i>Fluxo
-        </button>
-        <button onclick="navigateTo('view-search')" class="px-3 py-2 rounded-lg hover:text-brand-main hover:bg-brand-light/50 transition">
+        <button data-nav-roles="customer" onclick="navigateTo('view-search')" class="px-3 py-2 rounded-lg hover:text-brand-main hover:bg-brand-light/50 transition">
           <i class="fa-solid fa-magnifying-glass mr-1.5 text-xs"></i>Buscar
         </button>
-        <button onclick="openProfessionalProfile('carlos')" class="px-3 py-2 rounded-lg hover:text-brand-main hover:bg-brand-light/50 transition">
+        <button data-nav-roles="customer,professional" onclick="openProfessionalProfile('carlos')" class="px-3 py-2 rounded-lg hover:text-brand-main hover:bg-brand-light/50 transition">
           <i class="fa-solid fa-id-card mr-1.5 text-xs"></i>Perfil
         </button>
-        <button onclick="navigateTo('view-chat')" class="px-3 py-2 rounded-lg hover:text-brand-chat hover:bg-brand-chatLight transition relative">
+        <button data-nav-roles="customer,professional" onclick="navigateTo('view-chat')" class="px-3 py-2 rounded-lg hover:text-brand-chat hover:bg-brand-chatLight transition relative">
           <i class="fa-solid fa-comment-dots mr-1.5 text-xs text-brand-chat"></i>Chat
           <span class="inline-block w-2 h-2 rounded-full bg-brand-chat ml-1"></span>
         </button>
-        <button onclick="navigateTo('view-pro-dashboard')" class="px-3 py-2 rounded-lg hover:text-brand-main hover:bg-brand-light/50 transition">
+        <button data-nav-roles="professional" onclick="navigateTo('view-pro-dashboard')" class="px-3 py-2 rounded-lg hover:text-brand-main hover:bg-brand-light/50 transition">
           <i class="fa-solid fa-briefcase mr-1.5 text-xs"></i>Área do Técnico
         </button>
-        <button onclick="navigateTo('view-moderation')" class="px-3 py-2 rounded-lg hover:text-brand-alert hover:bg-red-50 transition text-brand-muted">
+        <button data-nav-roles="admin" onclick="navigateTo('view-admin-dashboard')" class="px-3 py-2 rounded-lg hover:text-brand-main hover:bg-brand-light/50 transition text-brand-muted">
+          <i class="fa-solid fa-chart-line mr-1.5 text-xs"></i>Painel ADM
+        </button>
+        <button data-nav-roles="admin" onclick="navigateTo('view-moderation')" class="px-3 py-2 rounded-lg hover:text-brand-alert hover:bg-red-50 transition text-brand-muted">
           <i class="fa-solid fa-shield-halved mr-1.5 text-xs text-brand-alert"></i>Moderação
         </button>
       </nav>
@@ -170,7 +170,7 @@
     <!-- ================================================================= -->
     <!-- TELA 1: AUTENTICAÇÃO / LOGIN & CADASTRO (IDENTIFICAÇÃO POSITIVA) -->
     <!-- ================================================================= -->
-    <div id="view-auth" class="view-screen active max-w-md mx-auto">
+    <div id="view-auth" class="view-screen max-w-md mx-auto">
       <div class="bg-white rounded-3xl p-6 sm:p-8 border border-brand-border shadow-sm">
         
         <div class="text-center mb-6">
@@ -187,7 +187,10 @@
             <i class="fa-solid fa-house-user mr-1.5"></i>Morador
           </button>
           <button id="roleProBtn" onclick="switchAuthRole('professional')" class="flex-1 py-2 text-xs font-semibold text-brand-muted hover:text-brand-main rounded-lg transition">
-            <i class="fa-solid fa-screwdriver-wrench mr-1.5"></i>Técnico / Profissional
+            <i class="fa-solid fa-screwdriver-wrench mr-1.5"></i>Profissional
+          </button>
+          <button id="roleAdminBtn" onclick="switchAuthRole('admin')" class="flex-1 py-2 text-xs font-semibold text-brand-muted hover:text-brand-main rounded-lg transition">
+            <i class="fa-solid fa-shield-halved mr-1"></i>ADM
           </button>
         </div>
 
@@ -247,7 +250,7 @@
     <!-- ================================================================= -->
     <!-- TELA 2: BUSCA POR SERVIÇO E BAIRRO COM FILTROS RÁPIDOS -->
     <!-- ================================================================= -->
-    <div id="view-search" class="view-screen space-y-6">
+    <div id="view-search" class="view-screen active space-y-6">
       
       <!-- Banner de Boas-Vindas & Busca -->
       <div class="bg-gradient-to-br from-brand-main via-sky-800 to-brand-secondary rounded-3xl p-6 sm:p-8 text-white shadow-sm relative overflow-hidden">
@@ -580,11 +583,11 @@
             <span>Valor acordado do reparo residencial</span>
             <span id="paymentGrossValue" class="font-semibold text-brand-text">R$ 100,00</span>
           </div>
-          <div class="flex justify-between text-brand-muted">
+          <div id="paymentFeeRow" class="hidden flex justify-between text-brand-muted">
             <span>Taxa operacional da plataforma (12% comissão)</span>
             <span id="paymentFeeValue" class="font-semibold text-brand-alert">- R$ 12,00</span>
           </div>
-          <div class="pt-2 border-t border-brand-border flex justify-between text-sm font-extrabold">
+          <div id="paymentNetRow" class="hidden pt-2 border-t border-brand-border flex justify-between text-sm font-extrabold">
             <span id="paymentProfessionalLabel" class="text-brand-main">Repasse líquido ao profissional (Carlos Silva)</span>
             <span id="paymentNetValue" class="text-brand-main">R$ 88,00</span>
           </div>
@@ -592,7 +595,7 @@
 
         <div class="p-3 bg-brand-chatLight rounded-xl text-[11px] text-brand-main font-medium border border-emerald-200">
           <i class="fa-solid fa-shield-halved mr-1"></i>
-          <strong>Garantia de Custódia:</strong> O valor permanece guardado na plataforma. O repasse de R$ 88,00 só é debitado após o contratante confirmar a conclusão da obra.
+          <strong>Garantia de Custódia:</strong> O pagamento fica protegido durante a contratação. A liberação ao profissional ocorre após a confirmação da conclusão do serviço.
         </div>
       </div>
 
@@ -789,6 +792,23 @@
 
       </div>
 
+      <!-- Rendimento financeiro do profissional -->
+      <section class="bg-white rounded-3xl p-5 border border-brand-border shadow-sm space-y-4" aria-labelledby="proFinancialTitle">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <h3 id="proFinancialTitle" class="text-sm font-extrabold text-brand-text">Rendimento financeiro</h3>
+            <p class="text-xs text-brand-muted mt-1">Resumo demonstrativo dos serviços pagos pela plataforma.</p>
+          </div>
+          <span class="text-[10px] bg-brand-chatLight text-brand-main font-bold px-2 py-1 rounded-full">Financeiro</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="rounded-2xl bg-brand-bg border border-brand-border p-4"><p class="text-[10px] text-brand-muted">Total de serviços pagos</p><strong id="proFinancialGross" class="block text-lg text-brand-text mt-1">R$ 0,00</strong></div>
+          <div class="rounded-2xl bg-brand-bg border border-brand-border p-4"><p class="text-[10px] text-brand-muted">Taxas da plataforma</p><strong id="proFinancialFees" class="block text-lg text-brand-alert mt-1">R$ 0,00</strong></div>
+          <div class="rounded-2xl bg-brand-chatLight border border-emerald-200 p-4"><p class="text-[10px] text-brand-main">Rendimento líquido estimado</p><strong id="proFinancialNet" class="block text-lg text-brand-main mt-1">R$ 0,00</strong></div>
+        </div>
+        <p id="proFinancialNote" class="text-[10px] text-brand-muted">Os valores serão atualizados após pagamentos demonstrativos. Este protótipo não realiza repasses reais.</p>
+      </section>
+
       <!-- Ações do Painel e Chamados Recebidos -->
       <div class="bg-white rounded-3xl p-5 border border-brand-border shadow-sm space-y-3">
         <div class="flex items-center justify-between">
@@ -815,9 +835,39 @@
     </div>
 
     <!-- ================================================================= -->
+    <!-- PAINEL ADMINISTRATIVO: INDICADORES + MODERAÇÃO -->
+    <div id="view-admin-dashboard" class="view-screen space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div><span class="text-[10px] font-bold uppercase tracking-wider text-brand-main bg-brand-light px-2.5 py-1 rounded-full">Área restrita</span>
+          <h2 class="text-2xl font-extrabold text-brand-main mt-2">Painel Administrativo</h2>
+          <p class="text-xs text-brand-muted">Indicadores da plataforma, gestão de profissionais e moderação no mesmo lugar.</p></div>
+        <button onclick="navigateTo('view-moderation')" class="px-4 py-2.5 rounded-xl bg-brand-alert text-white text-xs font-bold"><i class="fa-solid fa-shield-halved mr-2"></i>Abrir moderação</button>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="bg-white rounded-2xl border border-brand-border p-4"><p class="text-xs text-brand-muted">Perfis profissionais</p><strong id="adminProfessionalCount" class="block text-3xl text-brand-main mt-2">—</strong><p class="text-[10px] text-brand-muted mt-1">Perfis de demonstração cadastrados</p></div>
+        <div class="bg-white rounded-2xl border border-brand-border p-4"><p class="text-xs text-brand-muted">Serviço mais pedido</p><strong id="adminTopService" class="block text-xl text-brand-main mt-2">—</strong><p id="adminTopServiceCount" class="text-[10px] text-brand-muted mt-1">Com base nos orçamentos do chat</p></div>
+        <div class="bg-white rounded-2xl border border-brand-border p-4"><p class="text-xs text-brand-muted">Arrecadação simulada</p><strong id="adminRevenue" class="block text-2xl text-brand-main mt-2">R$ 0,00</strong><p class="text-[10px] text-brand-muted mt-1">Pagamentos confirmados na demonstração</p></div>
+        <div class="bg-white rounded-2xl border border-brand-border p-4"><p class="text-xs text-brand-muted">Orçamentos pendentes</p><strong id="adminPendingQuotes" class="block text-3xl text-brand-alert mt-2">0</strong><p class="text-[10px] text-brand-muted mt-1">Aguardando resposta ou negociação</p></div>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <section class="bg-white rounded-3xl border border-brand-border p-5"><div class="flex items-center justify-between mb-3"><h3 class="font-extrabold text-brand-text">Profissionais em destaque</h3><i class="fa-solid fa-trophy text-amber-500"></i></div><p class="text-xs text-brand-muted mb-4">Ordenados pela nota média e quantidade de avaliações.</p><div id="adminFeaturedPros" class="space-y-3"></div></section>
+        <section class="bg-white rounded-3xl border border-brand-border p-5"><div class="flex items-center justify-between mb-3"><h3 class="font-extrabold text-brand-text">Orçamentos que precisam de atenção</h3><i class="fa-solid fa-comments text-brand-chat"></i></div><p class="text-xs text-brand-muted mb-4">Propostas sem decisão e pedidos de negociação encontrados no chat.</p><div id="adminPendingList" class="space-y-3"></div><button onclick="navigateTo('view-chat')" class="mt-4 w-full rounded-xl bg-brand-chat text-white py-2.5 text-xs font-bold">Abrir chat</button></section>
+      </div>
+      <section class="bg-white rounded-3xl border border-brand-border p-5">
+        <h3 class="font-extrabold text-brand-text mb-1">Acesso aos perfis</h3>
+        <p class="text-xs text-brand-muted mb-4">Consulte os perfis diretamente pelo painel administrativo, sem precisar de uma aba separada.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="rounded-2xl border border-brand-border p-4"><p class="text-sm font-bold text-brand-text"><i class="fa-solid fa-screwdriver-wrench mr-2 text-brand-main"></i>Perfil profissional</p><p class="text-xs text-brand-muted mt-1 mb-3">Visualize o perfil demonstrativo do técnico cadastrado.</p><button onclick="openProfessionalProfile('carlos')" class="w-full rounded-xl bg-brand-main text-white py-2.5 text-xs font-bold">Ver perfil do técnico</button></div>
+          <div class="rounded-2xl border border-brand-border p-4"><p class="text-sm font-bold text-brand-text"><i class="fa-solid fa-house-user mr-2 text-brand-main"></i>Perfil do morador</p><p class="text-xs text-brand-muted mt-1 mb-3">Consulte o perfil de demonstração do morador.</p><button onclick="showToast('Perfil demonstrativo do morador: Ana Oliveira. O cadastro completo de moradores poderá ser conectado ao banco de dados numa próxima etapa.')" class="w-full rounded-xl border border-brand-border text-brand-main py-2.5 text-xs font-bold">Ver perfil do morador</button></div>
+        </div>
+      </section>
+      <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4 text-xs text-blue-900"><strong>Nota sobre os dados:</strong> este protótipo calcula indicadores a partir dos perfis e mensagens disponíveis neste navegador. Os pagamentos são simulados; não há cobrança real nem banco de dados compartilhado.</div>
+    </div>
+
     <!-- TELA 9: PAINEL DE MODERAÇÃO E DENÚNCIA (ATIVIDADE ADMINISTRATIVA) -->
     <!-- ================================================================= -->
     <div id="view-moderation" class="view-screen space-y-5">
+      <div class="flex items-center justify-between"><button onclick="navigateTo('view-admin-dashboard')" class="text-xs font-bold text-brand-main"><i class="fa-solid fa-arrow-left mr-1"></i>Voltar ao Painel ADM</button><span class="text-[10px] bg-brand-light text-brand-main rounded-full px-3 py-1 font-bold">Módulo do administrador</span></div>
       
       <div class="flex items-center justify-between">
         <div>
@@ -1010,26 +1060,18 @@
   </div>
 
   <!-- Barra de Navegação Inferior (Exclusiva Mobile) -->
-  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-brand-border px-3 py-2 z-40 flex justify-around items-center text-center">
-    <button onclick="navigateTo('view-search')" class="flex flex-col items-center gap-1 text-brand-main">
+  <nav id="mobileNav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-brand-border px-3 py-2 z-40 flex justify-around items-center text-center">
+    <button data-nav-roles="customer" onclick="navigateTo('view-search')" class="flex flex-col items-center gap-1 text-brand-main">
       <i class="fa-solid fa-magnifying-glass text-base"></i>
       <span class="text-[9px] font-bold">Buscar</span>
     </button>
-    <button onclick="navigateTo('view-compare')" class="flex flex-col items-center gap-1 text-brand-muted hover:text-brand-main">
-      <i class="fa-solid fa-code-compare text-base"></i>
-      <span class="text-[9px] font-semibold">Comparar</span>
-    </button>
-    <button onclick="navigateTo('view-chat')" class="flex flex-col items-center gap-1 text-brand-chat">
+    <button data-nav-roles="customer,professional" onclick="navigateTo('view-chat')" class="flex flex-col items-center gap-1 text-brand-chat">
       <i class="fa-solid fa-comment-dots text-base"></i>
       <span class="text-[9px] font-bold">Chat</span>
     </button>
-    <button onclick="navigateTo('view-pro-dashboard')" class="flex flex-col items-center gap-1 text-brand-muted hover:text-brand-main">
+    <button data-nav-roles="professional" onclick="navigateTo('view-pro-dashboard')" class="flex flex-col items-center gap-1 text-brand-muted hover:text-brand-main">
       <i class="fa-solid fa-id-card-clip text-base"></i>
       <span class="text-[9px] font-semibold">Técnico</span>
-    </button>
-    <button onclick="navigateTo('view-flow')" class="flex flex-col items-center gap-1 text-brand-muted hover:text-brand-main">
-      <i class="fa-solid fa-route text-base"></i>
-      <span class="text-[9px] font-semibold">Fluxo</span>
     </button>
   </nav>
 
@@ -1145,12 +1187,25 @@
       updateHireModal();
       updatePaymentView();
       updateReviewView();
+      renderAdminDashboard();
+      renderProfessionalFinancials();
+      currentUserLoggedIn = false;
       switchAuthRole('customer');
+      updateRoleNavigation();
+      navigateTo('view-search');
       updateChatHeader();
     });
 
     // Navegação entre telas do SPA
     function navigateTo(viewId) {
+      if (viewId === 'view-chat' && !currentUserLoggedIn) {
+        showToast('Crie uma conta ou entre para conversar com um profissional.');
+        viewId = 'view-auth';
+      }
+      if (['view-admin-dashboard', 'view-moderation'].includes(viewId) && (!currentUserLoggedIn || currentUserRole !== 'admin')) {
+        showToast('Acesso restrito: entre com o perfil de administrador.');
+        viewId = 'view-auth';
+      }
       document.querySelectorAll('.view-screen').forEach(el => {
         el.classList.remove('active');
       });
@@ -1163,6 +1218,27 @@
 
       // Atualiza marcador de passos do fluxo se aplicável
       updateFlowIndicator(viewId);
+    }
+
+    function renderAdminDashboard() {
+      const messages = getChatMessages();
+      const quotes = messages.filter(m => m.type === 'quote');
+      const pending = quotes.filter(q => !['accepted','declined','superseded'].includes(q.quoteStatus));
+      const count = document.getElementById('adminProfessionalCount'); if (count) count.textContent = professionalsData.length;
+      const frequencies = {};
+      quotes.forEach(q => { const service = (q.service || 'Serviço não informado').trim(); frequencies[service] = (frequencies[service] || 0) + 1; });
+      const top = Object.entries(frequencies).sort((a,b) => b[1]-a[1])[0];
+      const topEl = document.getElementById('adminTopService'); if (topEl) topEl.textContent = top ? top[0] : 'Sem dados';
+      const topCount = document.getElementById('adminTopServiceCount'); if (topCount) topCount.textContent = top ? `${top[1]} orçamento(s) registrado(s)` : 'Envie orçamentos pelo chat para gerar estatísticas';
+      let revenue = 0; try { revenue = Number(localStorage.getItem('reparosPlusDemoRevenue') || 0); } catch (_) {}
+      const rev = document.getElementById('adminRevenue'); if (rev) rev.textContent = revenue.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+      const pend = document.getElementById('adminPendingQuotes'); if (pend) pend.textContent = pending.length;
+      const featured = document.getElementById('adminFeaturedPros');
+      if (featured) {
+        featured.innerHTML = [...professionalsData].sort((a,b) => b.overallScore-a.overallScore || b.reviewsCount-a.reviewsCount).slice(0,3).map((pro,i) => `<div class="flex items-center gap-3 border border-brand-border rounded-xl p-3"><div class="w-10 h-10 rounded-full bg-brand-light text-brand-main flex items-center justify-center font-extrabold">${escapeHTML(pro.initials || pro.name.split(' ').map(n=>n[0]).join('').slice(0,2))}</div><div class="flex-1"><p class="text-xs font-bold text-brand-text">${i===0?'🏆 ':''}${escapeHTML(pro.name)}</p><p class="text-[10px] text-brand-muted">${escapeHTML(pro.specialty)} · ${pro.reviewsCount} avaliações</p></div><span class="text-xs font-extrabold text-amber-600">★ ${Number(pro.overallScore).toFixed(1)}</span><button onclick="openProfessionalProfile('${pro.id}')" class="text-[10px] text-brand-main font-bold">Ver</button></div>`).join('') || '<p class="text-xs text-brand-muted">Nenhum perfil cadastrado.</p>';
+      }
+      const list = document.getElementById('adminPendingList');
+      if (list) list.innerHTML = pending.slice(-5).reverse().map(q => `<div class="border border-brand-border rounded-xl p-3"><div class="flex justify-between gap-2"><p class="text-xs font-bold text-brand-text">${escapeHTML(q.service || 'Orçamento')}</p><span class="text-[10px] font-bold ${q.quoteStatus==='negotiation_requested'?'text-amber-700':'text-red-600'}">${q.quoteStatus==='negotiation_requested'?'Negociação solicitada':'Aguardando resposta'}</span></div><p class="text-xs text-brand-muted mt-1">${Number(q.price||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})} · ${escapeHTML(q.author || 'Profissional')}</p></div>`).join('') || '<p class="text-xs text-brand-muted">Nenhum orçamento pendente no momento.</p>';
     }
 
     function updateFlowIndicator(viewId) {
@@ -1461,7 +1537,7 @@
     }
 
     function getCurrentDisplayName() {
-      return currentUserRole === 'professional' ? 'Carlos Silva (Técnico)' : getResidentName();
+      return currentUserRole === 'professional' ? 'Carlos Silva (Técnico)' : currentUserRole === 'admin' ? 'Administrador' : getResidentName();
     }
 
     function updateChatHeader() {
@@ -1564,13 +1640,13 @@
       messages.push({id:`quote-${now.getTime()}`, type:'quote', role:'professional', author:getCurrentDisplayName(), service, price, details, quoteStatus:null, time:`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`, createdAt:now.toISOString()});
       saveChatMessages(messages);
       document.getElementById('quoteService').value=''; document.getElementById('quotePrice').value=''; document.getElementById('quoteDetails').value='';
-      toggleQuoteForm(false); renderChatMessages(); showToast('Orçamento enviado ao morador.');
+      toggleQuoteForm(false); renderChatMessages(); renderAdminDashboard(); showToast('Orçamento enviado ao morador.');
     }
 
     function updateQuoteStatus(id, status) {
       const messages=getChatMessages(); const quote=messages.find(m=>m.id===id && m.type==='quote');
       if (!quote) return;
-      quote.quoteStatus=status; saveChatMessages(messages); renderChatMessages();
+      quote.quoteStatus=status; saveChatMessages(messages); renderChatMessages(); renderAdminDashboard();
     }
 
     function requestQuoteNegotiation(id) {
@@ -1579,7 +1655,7 @@
       const now = new Date();
       const messages = getChatMessages();
       messages.push({ id:`negotiation-${now.getTime()}`, type:'text', role:'customer', author:getCurrentDisplayName(), text:'Gostaria de negociar o valor deste orçamento. Poderia enviar uma nova proposta?', time:`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`, createdAt:now.toISOString() });
-      saveChatMessages(messages); renderChatMessages();
+      saveChatMessages(messages); renderChatMessages(); renderAdminDashboard();
       showToast('Pedido de negociação enviado ao técnico.');
     }
     function acceptQuote(id) {
@@ -1659,10 +1735,12 @@
       const netEl = document.getElementById('paymentNetValue');
       const confirmEl = document.getElementById('confirmPaymentText');
       const money = value => value.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
-      if (professionalLabel) professionalLabel.textContent = `Repasse líquido ao profissional (${acceptedQuoteForPayment?.professional || currentSelectedPro.name})`;
+      if (professionalLabel) professionalLabel.textContent = `Valor destinado ao profissional (${acceptedQuoteForPayment?.professional || currentSelectedPro.name})`;
       if (grossEl) grossEl.textContent = money(gross);
       if (feeEl) feeEl.textContent = `- ${money(fee)}`;
       if (netEl) netEl.textContent = money(net);
+      document.getElementById("paymentFeeRow")?.classList.add("hidden");
+      document.getElementById("paymentNetRow")?.classList.add("hidden");
       if (confirmEl) confirmEl.textContent = `Confirmar pagamento de ${money(gross)} em custódia`;
       const radios = [...document.querySelectorAll('input[name="paymentMethod"]')];
       radios.forEach(radio => radio.onchange = updatePaymentMethodPanels);
@@ -1699,7 +1777,18 @@
       const gross = acceptedQuoteForPayment?.price ?? 100;
       const method = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'pix';
       const methodName = method === 'pix' ? 'Pix (simulação)' : method === 'card' ? 'cartão de crédito (simulação)' : 'cartão de débito (simulação)';
+      const fee = Number(gross || 0) * 0.12;
+      const net = Number(gross || 0) - fee;
+      try {
+        const oldRevenue = Number(localStorage.getItem('reparosPlusDemoRevenue') || 0);
+        localStorage.setItem('reparosPlusDemoRevenue', String(oldRevenue + Number(gross || 0)));
+        const orders = JSON.parse(localStorage.getItem('reparosPlusPaidOrders') || '[]');
+        orders.push({gross:Number(gross || 0), fee, net, professional:acceptedQuoteForPayment?.professional || currentSelectedPro.name, method:methodName, paidAt:new Date().toISOString()});
+        localStorage.setItem('reparosPlusPaidOrders', JSON.stringify(orders));
+      } catch (_) {}
+      renderProfessionalFinancials();
       showToast(`Pagamento de ${gross.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})} por ${methodName} registrado na demonstração. Nenhuma cobrança real foi feita.`);
+      renderAdminDashboard();
       setTimeout(() => { updateReviewView(); navigateTo('view-review'); }, 800);
     }
 
@@ -1778,21 +1867,53 @@
       currentUserRole = role;
       const custBtn = document.getElementById('roleCustomerBtn');
       const proBtn = document.getElementById('roleProBtn');
+      const adminBtn = document.getElementById('roleAdminBtn');
       const loginInput = document.getElementById('authLoginInput');
       const passwordInput = document.getElementById('authPasswordInput');
       const nameField = document.getElementById('residentNameField');
       if (nameField) nameField.classList.toggle('hidden', role !== 'customer');
       // E-mail/senha fictícios para a demonstração; o nome do morador é editável.
-      if (loginInput) loginInput.value = role === 'professional' ? 'carlos.silva@reparosplus.demo' : 'ana.oliveira@reparosplus.demo';
+      if (loginInput) loginInput.value = role === 'professional' ? 'carlos.silva@reparosplus.demo' : role === 'admin' ? 'admin@reparosplus.demo' : 'ana.oliveira@reparosplus.demo';
       if (passwordInput) passwordInput.value = 'reparos2026';
+      if (nameField) nameField.classList.toggle('hidden', role !== 'customer');
+      [custBtn, proBtn, adminBtn].forEach(btn => { if (btn) btn.className = 'flex-1 py-2 text-xs font-semibold text-brand-muted hover:text-brand-main rounded-lg transition'; });
+      const activeBtn = role === 'customer' ? custBtn : role === 'professional' ? proBtn : adminBtn;
+      if (activeBtn) activeBtn.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-brand-main text-white transition shadow-sm';
       if (role === 'customer') {
         custBtn.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-brand-main text-white transition shadow-sm';
         proBtn.className = 'flex-1 py-2 text-xs font-semibold text-brand-muted hover:text-brand-main rounded-lg transition';
-      } else {
+      } else if (role === 'professional') {
         proBtn.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-brand-main text-white transition shadow-sm';
-        custBtn.className = 'flex-1 py-2 text-xs font-semibold text-brand-muted hover:text-brand-main rounded-lg transition';
+      } else if (adminBtn) {
+        adminBtn.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-brand-main text-white transition shadow-sm';
       }
       updateChatHeader();
+      updateRoleNavigation();
+    }
+
+    function updateRoleNavigation() {
+      document.querySelectorAll("[data-nav-roles]").forEach(el => {
+        const allowed = (el.dataset.navRoles || "").split(",");
+        // Navegação de perfil só aparece depois do login.
+        el.classList.toggle("hidden", !currentUserLoggedIn || !allowed.includes(currentUserRole));
+      });
+      const desktopNav = document.getElementById('desktopNav');
+      if (desktopNav) desktopNav.classList.toggle('hidden', !currentUserLoggedIn);
+      const mobileNav = document.getElementById('mobileNav');
+      if (mobileNav) mobileNav.classList.toggle('hidden', !currentUserLoggedIn);
+    }
+
+    function renderProfessionalFinancials() {
+      const money = value => Number(value || 0).toLocaleString("pt-BR", {style:"currency", currency:"BRL"});
+      let orders = [];
+      try { orders = JSON.parse(localStorage.getItem("reparosPlusPaidOrders") || "[]"); } catch (_) {}
+      const gross = orders.reduce((sum, order) => sum + Number(order.gross || 0), 0);
+      const fees = orders.reduce((sum, order) => sum + Number(order.fee || 0), 0);
+      const net = orders.reduce((sum, order) => sum + Number(order.net || 0), 0);
+      const grossEl = document.getElementById("proFinancialGross"); if (grossEl) grossEl.textContent = money(gross);
+      const feesEl = document.getElementById("proFinancialFees"); if (feesEl) feesEl.textContent = money(fees);
+      const netEl = document.getElementById("proFinancialNet"); if (netEl) netEl.textContent = money(net);
+      const note = document.getElementById("proFinancialNote"); if (note) note.textContent = orders.length ? `${orders.length} pagamento(s) demonstrativo(s) registrado(s). Valores ilustrativos, sem repasse real.` : "Ainda não há pagamentos demonstrativos registrados. O resumo será atualizado após um pagamento de teste.";
     }
 
     function handleAuthSubmit(e) {
@@ -1809,13 +1930,14 @@
       currentUserLoggedIn = true;
       userBadge.classList.remove('hidden');
       userBadge.classList.add('flex');
-      userNameDisplay.textContent = currentUserRole === 'professional' ? 'Carlos Silva (Técnico)' : typedResidentName;
+      userNameDisplay.textContent = currentUserRole === 'professional' ? 'Carlos Silva (Técnico)' : currentUserRole === 'admin' ? 'Administrador' : typedResidentName;
       authBtn.innerHTML = '<i class="fa-solid fa-arrow-right-from-bracket"></i> Sair';
       authBtn.onclick = handleLogout;
+      updateRoleNavigation();
       updateChatHeader();
       renderChatMessages();
       showToast(`Bem-vindo ao Reparos+! Acesso liberado.`);
-      navigateTo(currentUserRole === 'professional' ? 'view-pro-dashboard' : 'view-search');
+      if (currentUserRole === 'admin') { renderAdminDashboard(); navigateTo('view-admin-dashboard'); } else navigateTo(currentUserRole === 'professional' ? 'view-pro-dashboard' : 'view-search');
     }
 
     function handleLogout() {
@@ -1829,10 +1951,13 @@
       userNameDisplay.textContent = 'Visitante';
       authBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket mr-1.5"></i>Entrar';
       authBtn.onclick = () => navigateTo('view-auth');
+      updateRoleNavigation();
       updateChatHeader();
       renderChatMessages();
+      // Ao encerrar a sessão, retornar à busca pública e remover a navegação autenticada.
+      navigateTo('view-search');
+      updateRoleNavigation();
       showToast('Sessão encerrada com segurança.');
-      navigateTo('view-auth');
     }
 
     function toggleRegisterModal() {
