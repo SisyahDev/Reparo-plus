@@ -406,7 +406,7 @@
               <i class="fa-solid fa-comment-dots"></i>
               <span>💬 Chat por mensagem</span>
             </button>
-            <button onclick="openHireModal()" class="px-4 py-2.5 rounded-xl bg-brand-secondary text-white font-bold text-xs shadow-md shadow-brand-secondary/20 flex items-center gap-2 hover:bg-brand-actionDark transition">
+            <button id="profileHireButton" onclick="openHireModal()" class="px-4 py-2.5 rounded-xl bg-brand-secondary text-white font-bold text-xs shadow-md shadow-brand-secondary/20 flex items-center gap-2 hover:bg-brand-actionDark transition">
               <i class="fa-solid fa-handshake"></i>
               <span>Contratar Reparo</span>
             </button>
@@ -846,11 +846,12 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div class="bg-white rounded-2xl border border-brand-border p-4"><p class="text-xs text-brand-muted">Perfis profissionais</p><strong id="adminProfessionalCount" class="block text-3xl text-brand-main mt-2">—</strong><p class="text-[10px] text-brand-muted mt-1">Perfis de demonstração cadastrados</p></div>
         <div class="bg-white rounded-2xl border border-brand-border p-4"><p class="text-xs text-brand-muted">Serviço mais pedido</p><strong id="adminTopService" class="block text-xl text-brand-main mt-2">—</strong><p id="adminTopServiceCount" class="text-[10px] text-brand-muted mt-1">Com base nos orçamentos do chat</p></div>
-        <div class="bg-white rounded-2xl border border-brand-border p-4"><p class="text-xs text-brand-muted">Arrecadação simulada</p><strong id="adminRevenue" class="block text-2xl text-brand-main mt-2">R$ 0,00</strong><p class="text-[10px] text-brand-muted mt-1">Pagamentos confirmados na demonstração</p></div>
+        <div class="bg-white rounded-2xl border border-brand-border p-4"><p class="text-xs text-brand-muted">Volume de pagamentos</p><strong id="adminRevenue" class="block text-2xl text-brand-main mt-2">R$ 0,00</strong><p class="text-[10px] text-brand-muted mt-1">Total bruto dos pagamentos demonstrativos</p><p class="text-[10px] text-brand-muted mt-2">Receita da plataforma: <strong id="adminPlatformRevenue">R$ 0,00</strong></p></div>
         <div class="bg-white rounded-2xl border border-brand-border p-4"><p class="text-xs text-brand-muted">Orçamentos pendentes</p><strong id="adminPendingQuotes" class="block text-3xl text-brand-alert mt-2">0</strong><p class="text-[10px] text-brand-muted mt-1">Aguardando resposta ou negociação</p></div>
       </div>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <section class="bg-white rounded-3xl border border-brand-border p-5"><div class="flex items-center justify-between mb-3"><h3 class="font-extrabold text-brand-text">Profissionais em destaque</h3><i class="fa-solid fa-trophy text-amber-500"></i></div><p class="text-xs text-brand-muted mb-4">Ordenados pela nota média e quantidade de avaliações.</p><div id="adminFeaturedPros" class="space-y-3"></div></section>
+        <section class="bg-white rounded-3xl border border-brand-border p-5"><div class="flex items-center justify-between mb-3"><h3 class="font-extrabold text-brand-text">Serviços mais pedidos</h3><i class="fa-solid fa-chart-column text-brand-main"></i></div><p class="text-xs text-brand-muted mb-4">Ranking calculado pelos orçamentos registrados no chat.</p><div id="adminServiceRanking" class="space-y-3"></div></section>
+        <section class="bg-white rounded-3xl border border-brand-border p-5"><div class="flex items-center justify-between mb-3"><h3 class="font-extrabold text-brand-text">Profissionais em destaque</h3><i class="fa-solid fa-trophy text-amber-500"></i></div><p class="text-xs text-brand-muted mb-4">Selecione perfis para destacar; sugestões ordenadas por nota e avaliações.</p><div id="adminFeaturedPros" class="space-y-3"></div></section>
         <section class="bg-white rounded-3xl border border-brand-border p-5"><div class="flex items-center justify-between mb-3"><h3 class="font-extrabold text-brand-text">Orçamentos que precisam de atenção</h3><i class="fa-solid fa-comments text-brand-chat"></i></div><p class="text-xs text-brand-muted mb-4">Propostas sem decisão e pedidos de negociação encontrados no chat.</p><div id="adminPendingList" class="space-y-3"></div><button onclick="navigateTo('view-chat')" class="mt-4 w-full rounded-xl bg-brand-chat text-white py-2.5 text-xs font-bold">Abrir chat</button></section>
       </div>
       <section class="bg-white rounded-3xl border border-brand-border p-5">
@@ -1227,18 +1228,39 @@
       const count = document.getElementById('adminProfessionalCount'); if (count) count.textContent = professionalsData.length;
       const frequencies = {};
       quotes.forEach(q => { const service = (q.service || 'Serviço não informado').trim(); frequencies[service] = (frequencies[service] || 0) + 1; });
-      const top = Object.entries(frequencies).sort((a,b) => b[1]-a[1])[0];
+      const ranking = Object.entries(frequencies).sort((a,b) => b[1]-a[1] || a[0].localeCompare(b[0], 'pt-BR'));
+      const top = ranking[0];
       const topEl = document.getElementById('adminTopService'); if (topEl) topEl.textContent = top ? top[0] : 'Sem dados';
       const topCount = document.getElementById('adminTopServiceCount'); if (topCount) topCount.textContent = top ? `${top[1]} orçamento(s) registrado(s)` : 'Envie orçamentos pelo chat para gerar estatísticas';
-      let revenue = 0; try { revenue = Number(localStorage.getItem('reparosPlusDemoRevenue') || 0); } catch (_) {}
-      const rev = document.getElementById('adminRevenue'); if (rev) rev.textContent = revenue.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+      const rankingEl = document.getElementById('adminServiceRanking');
+      if (rankingEl) {
+        const max = Math.max(1, ...ranking.map(item => item[1]));
+        rankingEl.innerHTML = ranking.slice(0,5).map(([service, qty]) => `<div class="space-y-1"><div class="flex justify-between gap-3 text-xs"><span class="font-semibold text-brand-text">${escapeHTML(service)}</span><span class="text-brand-muted">${qty} orçamento(s)</span></div><div class="h-2 rounded-full bg-slate-100 overflow-hidden"><div class="h-full rounded-full bg-brand-chat" style="width:${Math.max(6, qty/max*100)}%"></div></div></div>`).join('') || '<p class="text-xs text-brand-muted">Ainda não há orçamentos para montar o ranking.</p>';
+      }
+      let orders = []; try { orders = JSON.parse(localStorage.getItem('reparosPlusPaidOrders') || '[]'); if (!Array.isArray(orders)) orders = []; } catch (_) {}
+      const grossRevenue = orders.reduce((sum, order) => sum + Number(order.gross || 0), 0);
+      const platformRevenue = orders.reduce((sum, order) => sum + Number(order.fee || 0), 0);
+      const rev = document.getElementById('adminRevenue'); if (rev) rev.textContent = grossRevenue.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+      const platformRev = document.getElementById('adminPlatformRevenue'); if (platformRev) platformRev.textContent = platformRevenue.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
       const pend = document.getElementById('adminPendingQuotes'); if (pend) pend.textContent = pending.length;
+      let featuredIds = []; try { featuredIds = JSON.parse(localStorage.getItem('reparosPlusFeaturedPros') || '[]'); if (!Array.isArray(featuredIds)) featuredIds = []; } catch (_) {}
       const featured = document.getElementById('adminFeaturedPros');
       if (featured) {
-        featured.innerHTML = [...professionalsData].sort((a,b) => b.overallScore-a.overallScore || b.reviewsCount-a.reviewsCount).slice(0,3).map((pro,i) => `<div class="flex items-center gap-3 border border-brand-border rounded-xl p-3"><div class="w-10 h-10 rounded-full bg-brand-light text-brand-main flex items-center justify-center font-extrabold">${escapeHTML(pro.initials || pro.name.split(' ').map(n=>n[0]).join('').slice(0,2))}</div><div class="flex-1"><p class="text-xs font-bold text-brand-text">${i===0?'🏆 ':''}${escapeHTML(pro.name)}</p><p class="text-[10px] text-brand-muted">${escapeHTML(pro.specialty)} · ${pro.reviewsCount} avaliações</p></div><span class="text-xs font-extrabold text-amber-600">★ ${Number(pro.overallScore).toFixed(1)}</span><button onclick="openProfessionalProfile('${pro.id}')" class="text-[10px] text-brand-main font-bold">Ver</button></div>`).join('') || '<p class="text-xs text-brand-muted">Nenhum perfil cadastrado.</p>';
+        const sorted = [...professionalsData].sort((a,b) => Number(featuredIds.includes(b.id))-Number(featuredIds.includes(a.id)) || b.overallScore-a.overallScore || b.reviewsCount-a.reviewsCount).slice(0,5);
+        featured.innerHTML = sorted.map((pro,i) => `<div class="flex items-center gap-3 border border-brand-border rounded-xl p-3"><div class="w-10 h-10 rounded-full bg-brand-light text-brand-main flex items-center justify-center font-extrabold">${escapeHTML(pro.initials || pro.name.split(' ').map(n=>n[0]).join('').slice(0,2))}</div><div class="flex-1 min-w-0"><p class="text-xs font-bold text-brand-text">${featuredIds.includes(pro.id)?'⭐ ':''}${escapeHTML(pro.name)}</p><p class="text-[10px] text-brand-muted">${escapeHTML(pro.specialty)} · ${pro.reviewsCount} avaliações</p></div><span class="text-xs font-extrabold text-amber-600">★ ${Number(pro.overallScore).toFixed(1)}</span><button onclick="openProfessionalProfile('${pro.id}')" class="text-[10px] text-brand-main font-bold">Ver</button><button onclick="toggleProfessionalFeatured('${pro.id}')" class="text-[10px] font-bold ${featuredIds.includes(pro.id)?'text-red-600':'text-emerald-700'}">${featuredIds.includes(pro.id)?'Remover':'Destacar'}</button></div>`).join('') || '<p class="text-xs text-brand-muted">Nenhum perfil cadastrado.</p>';
       }
       const list = document.getElementById('adminPendingList');
       if (list) list.innerHTML = pending.slice(-5).reverse().map(q => `<div class="border border-brand-border rounded-xl p-3"><div class="flex justify-between gap-2"><p class="text-xs font-bold text-brand-text">${escapeHTML(q.service || 'Orçamento')}</p><span class="text-[10px] font-bold ${q.quoteStatus==='negotiation_requested'?'text-amber-700':'text-red-600'}">${q.quoteStatus==='negotiation_requested'?'Negociação solicitada':'Aguardando resposta'}</span></div><p class="text-xs text-brand-muted mt-1">${Number(q.price||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})} · ${escapeHTML(q.author || 'Profissional')}</p></div>`).join('') || '<p class="text-xs text-brand-muted">Nenhum orçamento pendente no momento.</p>';
+    }
+
+    function toggleProfessionalFeatured(proId) {
+      if (currentUserRole !== 'admin' || !currentUserLoggedIn) { showToast('Apenas o administrador pode gerenciar os destaques.'); return; }
+      let featuredIds = [];
+      try { featuredIds = JSON.parse(localStorage.getItem('reparosPlusFeaturedPros') || '[]'); if (!Array.isArray(featuredIds)) featuredIds = []; } catch (_) {}
+      featuredIds = featuredIds.includes(proId) ? featuredIds.filter(id => id !== proId) : [...featuredIds, proId];
+      try { localStorage.setItem('reparosPlusFeaturedPros', JSON.stringify(featuredIds)); } catch (_) {}
+      renderAdminDashboard();
+      showToast(featuredIds.includes(proId) ? 'Profissional marcado em destaque.' : 'Destaque removido.');
     }
 
     function updateFlowIndicator(viewId) {
@@ -1387,6 +1409,10 @@
     function openProfessionalProfile(proId) {
       const pro = professionalsData.find(p => p.id === proId) || professionalsData[0];
       currentSelectedPro = pro;
+
+      // Um profissional pode consultar perfis, mas não deve contratar outro técnico.
+      const hireButton = document.getElementById('profileHireButton');
+      if (hireButton) hireButton.classList.toggle('hidden', currentUserLoggedIn && currentUserRole === 'professional');
 
       document.getElementById('profileName').textContent = pro.name;
       document.getElementById('profileAvatar').textContent = pro.initials;
@@ -1937,7 +1963,18 @@
       updateChatHeader();
       renderChatMessages();
       showToast(`Bem-vindo ao Reparos+! Acesso liberado.`);
-      if (currentUserRole === 'admin') { renderAdminDashboard(); navigateTo('view-admin-dashboard'); } else navigateTo(currentUserRole === 'professional' ? 'view-pro-dashboard' : 'view-search');
+      // Define o destino explicitamente após autenticar, evitando que a tela de login permaneça ativa.
+      const destination = currentUserRole === 'admin'
+        ? 'view-admin-dashboard'
+        : currentUserRole === 'professional'
+          ? 'view-pro-dashboard'
+          : 'view-search';
+      if (currentUserRole === 'admin') renderAdminDashboard();
+      updateRoleNavigation();
+      navigateTo(destination);
+      // Fallback defensivo: garante uma única tela ativa caso outro evento interfira na navegação.
+      document.querySelectorAll('.view-screen').forEach(el => el.classList.toggle('active', el.id === destination));
+      window.scrollTo({ top: 0, behavior: 'auto' });
     }
 
     function handleLogout() {
