@@ -17,7 +17,6 @@ Facilitar a busca por profissionais, a comunicação entre moradores e prestador
 |---|---:|
 | Silvya Oliveira | 04155813 |
 | Daivison Silva | 04191678 |
-| Pedro de Freitas | 04177446 |
 | Rian Ramos | 04192826 |
 
 ## Perfis e funcionalidades
